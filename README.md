@@ -1,1 +1,1 @@
-# FinalProject
+# Proyecto Final de Computación Gráfica
