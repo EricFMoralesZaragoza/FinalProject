@@ -19,6 +19,8 @@
 #include <time.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>					//Texture
+#define MINIAUDIO_IMPLEMENTATION //Audio
+#include "miniaudio.h"
 
 #define SDL_MAIN_HANDLED
 #include <SDL3/SDL.h>
@@ -31,6 +33,27 @@
 #include <iostream>
 #include <mmsystem.h>
 
+
+
+ma_engine engine;
+ma_sound music;
+
+void initAudio() {
+	ma_result result = ma_engine_init(NULL, &engine);
+	if (result != MA_SUCCESS) {
+		std::cout << "Error al inicial el motor de audio\n";
+	}
+}
+
+void playSound(const char* file) {
+	ma_sound_init_from_file(&engine, file, 0, NULL, NULL, &music);
+	ma_sound_set_looping(&music, MA_TRUE);
+	ma_sound_start(&music);
+}
+
+void closeAudio() {
+	ma_engine_uninit(&engine);
+}
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -89,7 +112,36 @@ glm::vec3 lightColor = glm::vec3(0.7f);
 glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
 glm::vec3 ambientColor = diffuseColor * glm::vec3(0.75f);
 
-// posiciones
+//  POSICIONES	//
+
+//Esfera
+
+int estadoEsf = 1;
+float
+posIniEsf_x = 0.0f,
+posIniEsf_y = 12.0f,
+posIniEsf_z = 0.0f,
+movEsf_x = posIniEsf_x,
+movEsf_y = posIniEsf_y,
+movEsf_z = posIniEsf_z,
+incMovEsf = 0.0f,
+orientaEsf_y = 0.0f,
+orientaEsf = 90.0f;
+
+
+//Auto
+
+int estadoAutoLego = 1;
+float
+posIniAuto_x = 0.0f,
+posIniAuto_y = 0.0f,
+posIniAuto_z = 0.0f,
+movAuto_x = posIniAuto_x,
+movAuto_y = posIniAuto_y,
+movAuto_z = posIniAuto_z,
+incMovAuto = 0.0f,
+orienta_y = 0.0f,
+orienta = 90.0f;
 
 bool	animacion = false,
 recorrido1 = true,
@@ -214,6 +266,80 @@ void LoadTextures()
 void animate(void) 
 {
 	myTime += 0.005f;
+
+	//Animación Esfera
+	if (estadoEsf == 1) //Avanza
+	{
+		movEsf_y = posIniEsf_y + sin(myTime*15)*3;
+		orientaEsf = myTime * 120;
+	}
+
+
+	//Animación Auto
+	incMovAuto = 0.3f;
+	if (estadoAutoLego == 1) //Avanza
+	{
+		movAuto_x += incMovAuto;
+		orienta = 90.0f;
+		if (movAuto_x >= posIniAuto_x + 15.0f) {
+			estadoAutoLego = 2;
+		}
+	}
+	if (estadoAutoLego == 2) {
+		movAuto_z += incMovAuto;
+		orienta = 0.0f;
+		if (movAuto_z >= posIniAuto_z + 15.0f) {
+			estadoAutoLego = 3;
+		}
+	}
+	if (estadoAutoLego == 3) {
+		movAuto_x -= incMovAuto;
+		orienta = -90.0f;
+		if (movAuto_x <= posIniAuto_x + 3.0f) {
+			estadoAutoLego = 4;
+		}
+	}
+	if (estadoAutoLego == 4) {
+		movAuto_x -= incMovAuto;
+		movAuto_y += incMovAuto*0.6;
+		orienta_y = -30.96;
+		orienta = -90.0f;
+		if (movAuto_x <= posIniAuto_x - 3.0f && movAuto_y >= 6.0f) {
+			estadoAutoLego = 5;
+		}
+	}
+	if (estadoAutoLego == 5) {
+		movAuto_x -= incMovAuto;
+		movAuto_y -= incMovAuto * 2.1;
+		orienta = -90.0f;
+		orienta_y = 0.0f;
+		if (movAuto_x <= posIniAuto_x - 6.0f && movAuto_y <= 0.0f) {
+			estadoAutoLego = 6;
+		}
+	}
+	if (estadoAutoLego == 6) {
+		movAuto_x -= incMovAuto;
+		orienta = -90.0f;
+		if (movAuto_x <= posIniAuto_x - 15.0f) {
+			estadoAutoLego = 7;
+		}
+	}
+	if (estadoAutoLego == 7) {
+		movAuto_z -= incMovAuto;
+		orienta = 180.0f;
+		if (movAuto_z <= posIniAuto_z + 0.0f) {
+			estadoAutoLego = 8;
+		}
+	}
+	if (estadoAutoLego == 8) {
+		movAuto_x += incMovAuto;
+		orienta = 90.0f;
+		if (movAuto_x >= posIniAuto_x + 0.0f) {
+			estadoAutoLego = 1;
+		}
+	}
+
+
 
 	if (myTime == 1.0f) {
 		myTime = 0;
@@ -402,6 +528,11 @@ int main() {
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetKeyCallback(window, my_input);
 
+	//AUDIO
+
+	initAudio();
+	playSound("resources/music/ambient.mp3");
+
 	// tell GLFW to capture our mouse
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
@@ -449,6 +580,11 @@ int main() {
 	// load models
 	// -----------
 	Model piso("resources/objects/piso/piso.obj");
+	Model carro("resources/objects/lego_car/PoliceCar.obj");
+	Model esfera("resources/objects/Esfera/Esfera.obj");
+	Model pisoK("resources/objects/pisoK/piso.obj");
+	Model ventanillas("resources/objects/zona_cajas/ventanillas.obj");
+	Model columna("resources/objects/columna/columna.obj");
 
 	//Inicialización de KeyFrames
 	/*for (int i = 0; i < MAX_FRAMES; i++)
@@ -652,12 +788,52 @@ int main() {
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.75f, 0.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(0.2f));
 		staticShader.setMat4("model", modelOp);
-		piso.Draw(staticShader);
+		piso.Draw(staticShader); 
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Carro
 		// -------------------------------------------------------------------------------------------------------------------------
-		//modelOp = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		/*
+		
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(movAuto_x, movAuto_y, movAuto_z - 15.0f));
+		tmp = modelOp = glm::rotate(modelOp, glm::radians(orienta), glm::vec3(0.0f, 1.0f, 0.0f));
+		tmp = modelOp = glm::rotate(modelOp, glm::radians(orienta_y), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader.setVec3("dirLight.specular", glm::vec3(0.0f, 0.0f, 9.0f));
+		staticShader.setMat4("model", modelOp);
+		carro.Draw(staticShader);
+
+		*/
+
+		// -------------------------------------------------------------------------------------------------------------------------
+		// Esfera
+		// -------------------------------------------------------------------------------------------------------------------------
+
+		/* modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(movEsf_x, movEsf_y, movEsf_z));
+		tmp = modelOp = glm::rotate(modelOp, glm::radians(orientaEsf), glm::vec3(0.0f, 1.0f, 0.0f));
+		tmp = modelOp = glm::rotate(modelOp, glm::radians(orientaEsf_y), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader.setMat4("model", modelOp);
+		esfera.Draw(staticShader);
+
+		*/
+
+		/*
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(movEsf_x, movEsf_y, movEsf_z));
+		tmp = modelOp = glm::rotate(modelOp, glm::radians(orientaEsf), glm::vec3(0.0f, 1.0f, 0.0f));
+		tmp = modelOp = glm::rotate(modelOp, glm::radians(orientaEsf_y), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader.setMat4("model", modelOp);
+		pisoK.Draw(staticShader);
+
+		*/
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader.setMat4("model", modelOp);
+		columna.Draw(staticShader);
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Personaje
