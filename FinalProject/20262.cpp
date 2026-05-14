@@ -82,10 +82,10 @@ const int LOOP_TIME = 1000 / FPS; // = 16 milisec // 1000 millisec == 1 sec
 double	deltaTime = 0.0f,
 lastFrame = 0.0f;
 
-void getResolution(void);
-void myData(void);							// De la practica 4
-void LoadTextures(void);					// De la práctica 6
-unsigned int generateTextures(char*, bool, bool);	// De la práctica 6
+//void getResolution(void);
+//void myData(void);							// De la practica 4
+//void LoadTextures(void);					// De la práctica 6
+//unsigned int generateTextures(char*, bool, bool);	// De la práctica 6
 
 float myTime = 0.0f;
 
@@ -211,58 +211,6 @@ void interpolation(void)	//PlayIndex define el cuadro inicial de la interpolació
 
 }
 
-unsigned int generateTextures(const char* filename, bool alfa, bool isPrimitive)
-{
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// load image, create texture and generate mipmaps
-	int width, height, nrChannels;
-	
-	if(isPrimitive)
-		stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	else
-		stbi_set_flip_vertically_on_load(false); // tell stb_image.h to flip loaded texture's on the y-axis.
-
-
-	unsigned char* data = stbi_load(filename, &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		if (alfa)
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		else
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		return textureID;
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-		return 100;
-	}
-
-	stbi_image_free(data);
-}
-
-void LoadTextures()
-{
-
-	t_smile = generateTextures("Texturas/awesomeface.png", 1, true);
-	t_toalla = generateTextures("Texturas/toalla.tga", 0, true);
-	t_unam = generateTextures("Texturas/escudo_unam.jpg", 0, true);
-	t_ladrillos = generateTextures("Texturas/bricks.jpg", 0, true);
-	//This must be the last
-	t_white = generateTextures("Texturas/white.jpg", 0, false);
-}
-
-
-
 void animate(void) 
 {
 	myTime += 0.005f;
@@ -384,129 +332,6 @@ void getResolution() {
 	SCR_HEIGHT = (mode->height) - 80;
 }
 
-void myData() {
-	float vertices[] = {
-		// positions          // texture coords
-		 0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
-		 0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // top left 
-	};
-	unsigned int indices[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
-	};
-
-	float verticesPiso[] = {
-		// positions          // texture coords
-		 10.5f,  10.5f, 0.0f,   4.0f, 4.0f, // top right
-		 10.5f, -10.5f, 0.0f,   4.0f, 0.0f, // bottom right
-		-10.5f, -10.5f, 0.0f,   0.0f, 0.0f, // bottom left
-		-10.5f,  10.5f, 0.0f,   0.0f, 4.0f  // top left 
-	};
-	unsigned int indicesPiso[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
-	};
-
-	GLfloat verticesCubo[] = {
-		//Position				//texture coords
-		-0.5f, -0.5f, 0.5f,		0.0f, 0.0f,	//V0 - Frontal
-		0.5f, -0.5f, 0.5f,		1.0f, 0.0f,	//V1
-		0.5f, 0.5f, 0.5f,		1.0f, 1.0f,	//V5
-		-0.5f, -0.5f, 0.5f,		0.0f, 0.0f,	//V0
-		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4
-		0.5f, 0.5f, 0.5f,		1.0f, 1.0f,	//V5
-
-		0.5f, -0.5f, -0.5f,		0.0f, 0.0f,	//V2 - Trasera
-		-0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	//V3
-		-0.5f, 0.5f, -0.5f,		1.0f, 1.0f,	//V7
-		0.5f, -0.5f, -0.5f,		0.0f, 0.0f,	//V2
-		0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V6
-		-0.5f, 0.5f, -0.5f,		1.0f, 1.0f,	//V7
-
-		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4 - Izq
-		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V7
-		-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,	//V3
-		-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,	//V3
-		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4
-		-0.5f, -0.5f, 0.5f,		0.0f, 1.0f,	//V0
-
-		0.5f, 0.5f, 0.5f,		1.0f, 0.0f,	//V5 - Der
-		0.5f, -0.5f, 0.5f,		1.0f, 0.0f,	//V1
-		0.5f, -0.5f, -0.5f,		1.0f, 0.0f,	//V2
-		0.5f, 0.5f, 0.5f,		1.0f, 0.0f,	//V5
-		0.5f, 0.5f, -0.5f,		1.0f, 0.0f,	//V6
-		0.5f, -0.5f, -0.5f,		1.0f, 0.0f,	//V2
-
-		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4 - Sup
-		0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V5
-		0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V6
-		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4
-		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V7
-		0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V6
-
-		-0.5f, -0.5f, 0.5f,		1.0f, 1.0f,	//V0 - Inf
-		-0.5f, -0.5f, -0.5f,	1.0f, 1.0f,	//V3
-		0.5f, -0.5f, -0.5f,		1.0f, 1.0f,	//V2
-		-0.5f, -0.5f, 0.5f,		1.0f, 1.0f,	//V0
-		0.5f, -0.5f, -0.5f,		1.0f, 1.0f,	//V2
-		0.5f, -0.5f, 0.5f,		1.0f, 1.0f,	//V1
-	};
-
-	glGenVertexArrays(3, VAO);
-	glGenBuffers(3, VBO);
-	glGenBuffers(3, EBO);
-
-	glBindVertexArray(VAO[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[0]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// texture coord attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	//Para Piso
-	glBindVertexArray(VAO[2]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesPiso), verticesPiso, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[2]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesPiso), indicesPiso, GL_STATIC_DRAW);
-
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// texture coord attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-
-	//PARA CUBO
-	glBindVertexArray(VAO[1]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesCubo), verticesCubo, GL_STATIC_DRAW);
-
-	/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);*/
-
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// texture coord attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-}
-
 int main() {
 	// glfw: initialize and configure
 	glfwInit();
@@ -548,8 +373,8 @@ int main() {
 	// -----------------------------
 	//Mis funciones
 	//Datos a utilizar
-	LoadTextures();
-	myData();
+	//LoadTextures();
+	//myData();
 	glEnable(GL_DEPTH_TEST);
 
 	
@@ -579,12 +404,16 @@ int main() {
 
 	// load models
 	// -----------
-	Model piso("resources/objects/piso/piso.obj");
 	Model carro("resources/objects/lego_car/PoliceCar.obj");
 	Model esfera("resources/objects/Esfera/Esfera.obj");
 	Model pisoK("resources/objects/pisoK/piso.obj");
 	Model ventanillas("resources/objects/zona_cajas/ventanillas.obj");
+	Model banquitas("resources/objects/zona_cajas/banquitas4.obj");
+	Model basura("resources/objects/zona_cajas/boteBasura3.obj");
 	Model columna("resources/objects/columna/columna.obj");
+
+	ModelAnim Caminar("resources/objects/Caminar/Caminar.dae");
+	Caminar.initShaders(animShader.ID);
 
 	//Inicialización de KeyFrames
 	/*for (int i = 0; i < MAX_FRAMES; i++)
@@ -743,35 +572,17 @@ int main() {
 		//Tener Piso como referencia
 		glBindVertexArray(VAO[2]);
 		//Colocar código aquí
-		modelOp = glm::scale(glm::mat4(1.0f), glm::vec3(40.0f, 2.0f, 40.0f));
+		/*modelOp = glm::scale(glm::mat4(1.0f), glm::vec3(40.0f, 2.0f, 40.0f));
 		modelOp = glm::translate(modelOp, glm::vec3(0.0f, -1.0f, 0.0f));
 		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		myShader.setMat4("model", modelOp);
-		myShader.setVec3("aColor", 1.0f, 1.0f, 1.0f);
+		myShader.setVec3("aColor", 1.0f, 1.0f, 1.0f);*/
 		//glBindTexture(GL_TEXTURE_2D, t_ladrillos);			//Dibujar el piso cómo primitivas
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(VAO[0]);
 		//Colocar código aquí
-		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.0f, 0.0f));
-		modelOp = glm::scale(modelOp, glm::vec3(5.0f, 5.0f, 1.0f));
-		myShader.setMat4("model", modelOp);
-		myShader.setVec3("aColor", 1.0f, 1.0f, 1.0f);
-		glBindTexture(GL_TEXTURE_2D, t_unam);
-		//glDrawArrays(GL_TRIANGLES, 0, 36); //A lonely cube :(
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-		/***   Segundo objeto  **/
-		/*
-		glBindVertexArray(VAO[1]);
-		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 0.0f, 0.0f));
-		myShader.setMat4("model", modelOp);
-		myShader.setVec3("aColor", 1.0f, 1.0f, 1.0f);
-		glBindTexture(GL_TEXTURE_2D, t_unam);
-		glDrawArrays(GL_TRIANGLES, 0, 36); //A lonely cube :(
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		*/
-		glBindVertexArray(0);
+		
 		// ------------------------------------------------------------------------------------------------------------------------
 		// Termina Escenario Primitivas
 		// -------------------------------------------------------------------------------------------------------------------------
@@ -785,10 +596,10 @@ int main() {
 
 		//Linea añadida
 
-		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.75f, 0.0f));
+		/*modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.75f, 0.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(0.2f));
 		staticShader.setMat4("model", modelOp);
-		piso.Draw(staticShader); 
+		piso.Draw(staticShader); */
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Carro
@@ -830,77 +641,30 @@ int main() {
 
 		*/
 
-		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 3.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
 		staticShader.setMat4("model", modelOp);
-		columna.Draw(staticShader);
+		pisoK.Draw(staticShader);
 
-		// -------------------------------------------------------------------------------------------------------------------------
-		// Personaje
-		// -------------------------------------------------------------------------------------------------------------------------
-
-		//modelOp = glm::translate(glm::mat4(1.0f),
-		//	glm::vec3(50.0, 6.0f, -60.0f));
-		//modelOp = glm::scale(modelOp, glm::vec3(3.0f));
-		//staticShader.setMat4("model", modelOp);
-		//acuaman.Draw(staticShader);
-
-		
-		// -------------------------------------------------------------------------------------------------------------------------
-		// Just in case
-		// -------------------------------------------------------------------------------------------------------------------------
-		/*modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(posX, posY, posZ));
-		tmp = modelOp = glm::rotate(modelOp, glm::radians(giroMonito), glm::vec3(0.0f, 1.0f, 0.0));
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 3.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
 		staticShader.setMat4("model", modelOp);
-		torso.Draw(staticShader);
+		ventanillas.Draw(staticShader);
 
-		//Pierna Der
-		modelOp = glm::translate(tmp, glm::vec3(-0.5f, 0.0f, -0.1f));
-		modelOp = glm::rotate(modelOp, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
-		modelOp = glm::rotate(modelOp, glm::radians(-rotRodIzq), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 3.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
 		staticShader.setMat4("model", modelOp);
-		piernaDer.Draw(staticShader);
+		banquitas.Draw(staticShader);
 
-		//Pie Der
-		modelOp = glm::translate(modelOp, glm::vec3(0, -0.9f, -0.2f));
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 3.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
 		staticShader.setMat4("model", modelOp);
-		botaDer.Draw(staticShader);
+		basura.Draw(staticShader);
 
-		//Pierna Izq
-		modelOp = glm::translate(tmp, glm::vec3(0.5f, 0.0f, -0.1f));
-		modelOp = glm::rotate(modelOp, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		staticShader.setMat4("model", modelOp);
-		piernaIzq.Draw(staticShader);
-
-		//Pie Iz
-		modelOp = glm::translate(modelOp, glm::vec3(0, -0.9f, -0.2f));
-		staticShader.setMat4("model", modelOp);
-		botaDer.Draw(staticShader);	//Izq trase
-
-		//Brazo derecho
-		modelOp = glm::translate(tmp, glm::vec3(0.0f, -1.0f, 0.0f));
-		modelOp = glm::translate(modelOp, glm::vec3(-0.75f, 2.5f, 0));
-		modelOp = glm::rotate(modelOp, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		staticShader.setMat4("model", modelOp);
-		brazoDer.Draw(staticShader);
-
-		//Brazo izquierdo
-		modelOp = glm::translate(tmp, glm::vec3(0.0f, -1.0f, 0.0f));
-		modelOp = glm::translate(modelOp, glm::vec3(0.75f, 2.5f, 0));
-		modelOp = glm::rotate(modelOp, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		staticShader.setMat4("model", modelOp);
-		brazoIzq.Draw(staticShader);
-
-		//Cabeza
-		modelOp = glm::translate(tmp, glm::vec3(0.0f, -1.0f, 0.0f));
-		modelOp = glm::rotate(modelOp, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
-		modelOp = glm::translate(modelOp, glm::vec3(0.0f, 2.5f, 0));
-		staticShader.setMat4("model", modelOp);
-		cabeza.Draw(staticShader);*/
-
-		//-------------------------------------------------------------------------------------
-		// draw skybox as last
-		// -------------------
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(90.0f, 0.0f, 15.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.1f));
+		animShader.setMat4("model", modelOp);
+		Caminar.Draw(animShader);
 		
 
 		// Limitar el framerate a 60
