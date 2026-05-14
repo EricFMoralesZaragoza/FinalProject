@@ -82,11 +82,6 @@ const int LOOP_TIME = 1000 / FPS; // = 16 milisec // 1000 millisec == 1 sec
 double	deltaTime = 0.0f,
 lastFrame = 0.0f;
 
-//void getResolution(void);
-//void myData(void);							// De la practica 4
-//void LoadTextures(void);					// De la práctica 6
-//unsigned int generateTextures(char*, bool, bool);	// De la práctica 6
-
 float myTime = 0.0f;
 
 //For Keyboard
@@ -553,51 +548,6 @@ void myData() {
 		1, 2, 3  // second triangle
 	};
 
-	GLfloat verticesCubo[] = {
-		//Position				//texture coords
-		-0.5f, -0.5f, 0.5f,		0.0f, 0.0f,	//V0 - Frontal
-		0.5f, -0.5f, 0.5f,		1.0f, 0.0f,	//V1
-		0.5f, 0.5f, 0.5f,		1.0f, 1.0f,	//V5
-		-0.5f, -0.5f, 0.5f,		0.0f, 0.0f,	//V0
-		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4
-		0.5f, 0.5f, 0.5f,		1.0f, 1.0f,	//V5
-
-		0.5f, -0.5f, -0.5f,		0.0f, 0.0f,	//V2 - Trasera
-		-0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	//V3
-		-0.5f, 0.5f, -0.5f,		1.0f, 1.0f,	//V7
-		0.5f, -0.5f, -0.5f,		0.0f, 0.0f,	//V2
-		0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V6
-		-0.5f, 0.5f, -0.5f,		1.0f, 1.0f,	//V7
-
-		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4 - Izq
-		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V7
-		-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,	//V3
-		-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,	//V3
-		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4
-		-0.5f, -0.5f, 0.5f,		0.0f, 1.0f,	//V0
-
-		0.5f, 0.5f, 0.5f,		1.0f, 0.0f,	//V5 - Der
-		0.5f, -0.5f, 0.5f,		1.0f, 0.0f,	//V1
-		0.5f, -0.5f, -0.5f,		1.0f, 0.0f,	//V2
-		0.5f, 0.5f, 0.5f,		1.0f, 0.0f,	//V5
-		0.5f, 0.5f, -0.5f,		1.0f, 0.0f,	//V6
-		0.5f, -0.5f, -0.5f,		1.0f, 0.0f,	//V2
-
-		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4 - Sup
-		0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V5
-		0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V6
-		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4
-		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V7
-		0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V6
-
-		-0.5f, -0.5f, 0.5f,		1.0f, 1.0f,	//V0 - Inf
-		-0.5f, -0.5f, -0.5f,	1.0f, 1.0f,	//V3
-		0.5f, -0.5f, -0.5f,		1.0f, 1.0f,	//V2
-		-0.5f, -0.5f, 0.5f,		1.0f, 1.0f,	//V0
-		0.5f, -0.5f, -0.5f,		1.0f, 1.0f,	//V2
-		0.5f, -0.5f, 0.5f,		1.0f, 1.0f,	//V1
-	};
-
 	glGenVertexArrays(3, VAO);
 	glGenBuffers(3, VBO);
 	glGenBuffers(3, EBO);
@@ -630,15 +580,6 @@ void myData() {
 	// texture coord attribute
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
-
-	//PARA CUBO
-	glBindVertexArray(VAO[1]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesCubo), verticesCubo, GL_STATIC_DRAW);
-
-	/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);*/
 
 	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -754,18 +695,6 @@ int main() {
 
 	ModelAnim Waving("resources/objects/Waving/Waving.dae");
 	Waving.initShaders(animShader.ID);
-
-	//Inicialización de KeyFrames
-	/*for (int i = 0; i < MAX_FRAMES; i++)
-	{
-		KeyFrame[i].posX = 0;
-		KeyFrame[i].posY = 0;
-		KeyFrame[i].posZ = 0;
-		KeyFrame[i].rotRodIzq = 0;
-		KeyFrame[i].giroMonito = 0;
-		KeyFrame[i].giroCabeza = 0;
-		KeyFrame[i].giroBrazo= 0;
-	}*/
 
 	//Creación de animación
 
@@ -893,11 +822,7 @@ int main() {
 		staticShader.setFloat("material_shininess", 32.0f);
 		
 		
-
-		//glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 tmp = glm::mat4(1.0f);
-		// view/projection transformations
-		//glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
 		projectionOp = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10000.0f);
 		viewOp = camera.GetViewMatrix();
 		staticShader.setMat4("projection", projectionOp);
@@ -905,11 +830,7 @@ int main() {
 
 		//Setup shader for primitives
 		myShader.use();
-		// view/projection transformations
-		//projectionOp = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 400.0f);
 		viewOp = camera.GetViewMatrix();
-		// pass them to the shaders
-		//myShader.setMat4("model", modelOp);
 		myShader.setMat4("view", viewOp);
 		// note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
 		myShader.setMat4("projection", projectionOp);
@@ -923,7 +844,6 @@ int main() {
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Personaje Animacion
 		// -------------------------------------------------------------------------------------------------------------------------
-		//Remember to activate the shader with the animation
 		animShader.use();
 		animShader.setMat4("projection", projectionOp);
 		animShader.setMat4("view", viewOp);
@@ -936,27 +856,10 @@ int main() {
 		animShader.setVec3("light.direction", lightDirection);
 		animShader.setVec3("viewPos", camera.Position);
 
-
-		// -------------------------------------------------------------------------------------------------------------------------
-		// Segundo Personaje Animacion
-		// -------------------------------------------------------------------------------------------------------------------------
-
-
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Escenario Primitivas
 		// -------------------------------------------------------------------------------------------------------------------------
 		myShader.use();
-
-		//Tener Piso como referencia
-		//glBindVertexArray(VAO[2]);
-		//Colocar código aquí
-		/*modelOp = glm::scale(glm::mat4(1.0f), glm::vec3(40.0f, 2.0f, 40.0f));
-		modelOp = glm::translate(modelOp, glm::vec3(0.0f, -1.0f, 0.0f));
-		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		myShader.setMat4("model", modelOp);
-		myShader.setVec3("aColor", 1.0f, 1.0f, 1.0f);*/
-		//glBindTexture(GL_TEXTURE_2D, t_ladrillos);			//Dibujar el piso cómo primitivas
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		
 		glBindVertexArray(VAO[0]);
@@ -980,12 +883,6 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, t_techo);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		
-		//Colocar código aquí
-		
-		// ------------------------------------------------------------------------------------------------------------------------
-		// Termina Escenario Primitivas
-		// -------------------------------------------------------------------------------------------------------------------------
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Escenario
@@ -994,12 +891,6 @@ int main() {
 		staticShader.setMat4("projection", projectionOp);
 		staticShader.setMat4("view", viewOp);
 
-		//Linea añadida
-
-		/*modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.75f, 0.0f));
-		modelOp = glm::scale(modelOp, glm::vec3(0.2f));
-		staticShader.setMat4("model", modelOp);
-		piso.Draw(staticShader); */
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Carro
@@ -1211,13 +1102,10 @@ int main() {
 			SDL_Delay((int)(LOOP_TIME - deltaTime));
 		}
 
-		
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 	glDeleteVertexArrays(2, VAO);
 	glDeleteBuffers(2, VBO);
@@ -1226,7 +1114,6 @@ int main() {
 	return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 void my_input(GLFWwindow* window, int key, int scancode, int action, int mode) 
 {
