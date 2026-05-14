@@ -2,7 +2,7 @@
 /* ----------------   Proyecto Final   --------------------*/
 /*-----------------    2026-2   ---------------------------*/
 /*-------- Alumnos: ---------------------------------------*/
-/*-------- - García Martiínez Carlos Alfredo --------------*/
+/*-------- - García Martínez Carlos Alfredo --------------*/
 /*-------- - Medina Vaca Katia Alessandra    --------------*/
 /*-------- - Morales Zaragoza Eric Francisco --------------*/
 /*-------- - Dueñas Jarvio Pablo Alam        --------------*/
