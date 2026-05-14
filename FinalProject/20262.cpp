@@ -2,10 +2,10 @@
 /* ----------------   Proyecto Final   --------------------*/
 /*-----------------    2026-2   ---------------------------*/
 /*-------- Alumnos: ---------------------------------------*/
-/*-------- - GarcÌa MartiÌnez Carlos Alfredo --------------*/
+/*-------- - Garc√≠a Marti√≠nez Carlos Alfredo --------------*/
 /*-------- - Medina Vaca Katia Alessandra    --------------*/
 /*-------- - Morales Zaragoza Eric Francisco --------------*/
-/*-------- - DueÒas Jarvio Pablo Alam        --------------*/
+/*-------- - Due√±as Jarvio Pablo Alam        --------------*/
 /*---------------------------------------------------------*/
 
 #include <Windows.h>
@@ -84,8 +84,8 @@ lastFrame = 0.0f;
 
 //void getResolution(void);
 //void myData(void);							// De la practica 4
-//void LoadTextures(void);					// De la pr·ctica 6
-//unsigned int generateTextures(char*, bool, bool);	// De la pr·ctica 6
+//void LoadTextures(void);					// De la pr√°ctica 6
+//unsigned int generateTextures(char*, bool, bool);	// De la pr√°ctica 6
 
 float myTime = 0.0f;
 
@@ -112,6 +112,14 @@ glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
 glm::vec3 ambientColor = diffuseColor * glm::vec3(0.75f);
 
 //  POSICIONES	//
+
+// Variables para brazo robotico
+float	baseRotation = 0.0f,
+		cil0Rotation = 0.0f,
+		cil1Rotation = 0.0f,
+		cil2Rotation = 0.0f,
+		handRotation = 0.0f;
+int armState = 0;
 
 //Esfera
 
@@ -155,7 +163,7 @@ recorrido3 = false,
 recorrido4 = false;
 
 
-//Keyframes (ManipulaciÛn y dibujo)
+//Keyframes (Manipulaci√≥n y dibujo)
 float	posX = 0.0f,
 		posY = 3.0f,
 		posZ = 0.0f,
@@ -165,7 +173,7 @@ float	incX = 0.0f,
 		incZ = 0.0f,
 		incG = 0.0f;
 
-#define MAX_FRAMES 15	//Cantidad m·xima de Frames
+#define MAX_FRAMES 15	//Cantidad m√°xima de Frames
 int i_max_steps = 60;	//Cuadros intermedios
 int i_curr_steps = 0;
 typedef struct _frame
@@ -182,7 +190,7 @@ typedef struct _frame
 }FRAME;
 
 FRAME KeyFrame[MAX_FRAMES];
-int FrameIndex = 13;			//introducir n˙mero en caso de tener Key guardados
+int FrameIndex = 13;			//introducir n√∫mero en caso de tener Key guardados
 bool play = false;
 int playIndex = 0;
 
@@ -197,14 +205,14 @@ void saveFrame(void)
 
 	KeyFrame[FrameIndex].giroMonito = giroMonito;
 
-	//Aqui podemos imprimir el valor de la posiciÛn para poseteriormente guardar la animaciÛn
+	//Aqui podemos imprimir el valor de la posici√≥n para poseteriormente guardar la animaci√≥n
 
 
 
 	FrameIndex++;
 }
 
-void resetElements(void)  //Carga la posiciÛn inicial al objeto
+void resetElements(void)  //Carga la posici√≥n inicial al objeto
 {
 	posX = KeyFrame[0].posX;
 	posY = KeyFrame[0].posY;
@@ -214,7 +222,7 @@ void resetElements(void)  //Carga la posiciÛn inicial al objeto
 
 }
 
-void interpolation(void)	//PlayIndex define el cuadro inicial de la interpolaciÛn
+void interpolation(void)	//PlayIndex define el cuadro inicial de la interpolaci√≥n
 {
 	incX = (KeyFrame[playIndex + 1].posX - KeyFrame[playIndex].posX) / i_max_steps;
 	incY = (KeyFrame[playIndex + 1].posY - KeyFrame[playIndex].posY) / i_max_steps;
@@ -228,14 +236,116 @@ void animate(void)
 {
 	myTime += 0.005f;
 
-	//AnimaciÛn Esfera
+	//Animaci√≥n Brazo Robotico
+
+	switch(armState) {
+		case 0: //Giro inicial
+			if (baseRotation > -45.0f) {
+				baseRotation -= 1.5f;
+			} else {
+				armState = 1;
+			}
+		break;
+		case 1: // Extiende el brazo
+			if (cil0Rotation < 90.0f) {
+				cil0Rotation += 1.0f;
+				cil1Rotation -= 1.5f;
+				cil2Rotation += 2.0f;
+			} else {
+				armState = 2;
+			}
+		break;
+		case 2:	// Abre pinzas
+			if (handRotation < 45.0f) {
+				handRotation += 5.0f;
+			} else {
+				armState = 3;
+			}
+		break;
+		case 3:	// Cierra pinzas
+			if (handRotation > 0.0f) {
+				handRotation -= 5.0f;
+			}
+			else {
+				armState = 4;
+			}
+		break;
+		case 4:	// Abre pinzas
+			if (handRotation < 45.0f) {
+				handRotation += 5.0f;
+			}
+			else {
+				armState = 5;
+			}
+		break;
+		case 5:	// Cierra pinzas
+			if (handRotation > 0.0f) {
+				handRotation -= 5.0f;
+			}
+			else {
+				armState = 6;
+			}
+		break;
+		case 6:	// Giro 
+			if (baseRotation < 45.0f) {
+				baseRotation += 1.5f;
+			}
+			else {
+				armState = 7;
+			}
+		break;
+		case 7:	// Abre pinzas
+			if (handRotation < 45.0f) {
+				handRotation += 5.0f;
+			}
+			else {
+				armState = 8;
+			}
+		break;
+		case 8:	// Cierra pinzas
+			if (handRotation > 0.0f) {
+				handRotation -= 5.0f;
+			}
+			else {
+				armState = 9;
+			}
+		break;
+		case 9:	// Abre pinzas
+			if (handRotation < 45.0f) {
+				handRotation += 5.0f;
+			}
+			else {
+				armState = 10;
+			}
+		break;
+		case 10:// Cierra pinzas
+			if (handRotation > 0.0f) {
+				handRotation -= 5.0f;
+			}
+			else {
+				armState = 11;
+			}
+		break;
+		case 11:// Retrae el brazo
+			if (cil0Rotation > 0.0f) {
+				cil0Rotation -= 1.0f;
+				cil1Rotation += 1.5f;
+				cil2Rotation -= 2.0f;
+			}
+			else {
+				armState = 0;
+			}
+		break;
+	}
+	
+	//Animaci√≥n Esfera
 	if (estadoEsf == 1) //Avanza
 	{
 		movEsf_y = posIniEsf_y + sin(myTime*15)*6.6;
 		orientaEsf = myTime * 150;
 	}
 
-	//AnimaciÛn Pendulo
+	//Animaci√≥n Pendulo
 	if (estadoPen == 1) //1
 	{
 		orientaPen1 += incPen;
@@ -255,7 +365,7 @@ void animate(void)
 		}
 	}
 
-	//AnimaciÛn Auto
+	//Animaci√≥n Auto
 	incMovAuto = 0.3f;
 	if (estadoAutoLego == 1) //Avanza
 	{
@@ -624,13 +734,28 @@ int main() {
 	Model pendulos("resources/objects/pendulo/pendulos.obj");
 	Model pendulo("resources/objects/pendulo/pendulo.obj");
 
+	//Modelos del brazo robotico
+	Model raFixedBase("resources/objects/robotArm/ra_fixedBase.obj");
+	Model raLeft("resources/objects/robotArm/ra_left.obj");
+	Model raRight("resources/objects/robotArm/ra_right.obj");
+	Model raCilinder03("resources/objects/robotArm/ra_cilinder03.obj");
+	Model raCilinder("resources/objects/robotArm/ra_cilinder.obj");
+	Model raShortArm("resources/objects/robotArm/ra_shortArm.obj");
+	Model raCilinder02("resources/objects/robotArm/ra_cilinder02.obj");
+	Model raMediumArm("resources/objects/robotArm/ra_mediumArm.obj");
+	Model raCilinder01("resources/objects/robotArm/ra_cilinder01.obj");
+	Model raLongArm("resources/objects/robotArm/ra_longArm.obj");
+	Model raCilinder00("resources/objects/robotArm/ra_cilinder00.obj");
+	Model raAxe("resources/objects/robotArm/ra_axe.obj");
+	Model raRotativeBase("resources/objects/robotArm/ra_rotativeBase.obj");
+
 	ModelAnim Caminar("resources/objects/Caminar/Caminar.dae");
 	Caminar.initShaders(animShader.ID);
 
 	ModelAnim Waving("resources/objects/Waving/Waving.dae");
 	Waving.initShaders(animShader.ID);
 
-	//InicializaciÛn de KeyFrames
+	//Inicializaci√≥n de KeyFrames
 	/*for (int i = 0; i < MAX_FRAMES; i++)
 	{
 		KeyFrame[i].posX = 0;
@@ -642,7 +767,7 @@ int main() {
 		KeyFrame[i].giroBrazo= 0;
 	}*/
 
-	//CreaciÛn de animaciÛn
+	//Creaci√≥n de animaci√≥n
 
 	KeyFrame[0].posX = 0;
 	KeyFrame[0].posY = 3.0;
@@ -824,13 +949,13 @@ int main() {
 
 		//Tener Piso como referencia
 		//glBindVertexArray(VAO[2]);
-		//Colocar cÛdigo aquÌ
+		//Colocar c√≥digo aqu√≠
 		/*modelOp = glm::scale(glm::mat4(1.0f), glm::vec3(40.0f, 2.0f, 40.0f));
 		modelOp = glm::translate(modelOp, glm::vec3(0.0f, -1.0f, 0.0f));
 		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		myShader.setMat4("model", modelOp);
 		myShader.setVec3("aColor", 1.0f, 1.0f, 1.0f);*/
-		//glBindTexture(GL_TEXTURE_2D, t_ladrillos);			//Dibujar el piso cÛmo primitivas
+		//glBindTexture(GL_TEXTURE_2D, t_ladrillos);			//Dibujar el piso c√≥mo primitivas
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		
@@ -856,7 +981,7 @@ int main() {
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		
-		//Colocar cÛdigo aquÌ
+		//Colocar c√≥digo aqu√≠
 		
 		// ------------------------------------------------------------------------------------------------------------------------
 		// Termina Escenario Primitivas
@@ -869,7 +994,7 @@ int main() {
 		staticShader.setMat4("projection", projectionOp);
 		staticShader.setMat4("view", viewOp);
 
-		//Linea aÒadida
+		//Linea a√±adida
 
 		/*modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.75f, 0.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(0.2f));
@@ -924,6 +1049,73 @@ int main() {
 		staticShader.setMat4("model", modelOp);
 		pendulo.Draw(staticShader);
 
+		// -------------------------------------------------------------------------------------------------------------------------
+		// Brazo Robotico
+		// -------------------------------------------------------------------------------------------------------------------------
+
+		glm::mat4 jerarquia;
+
+		// Si se desea mover o reescalar el brazo robotico
+		// SOLAMENTE se debe colocar la nueva posici√≥n y la nueva escala en los siguientes vectores
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); // AQUI LA NUEVA POSICI√ìN
+		jerarquia = modelOp = glm::scale(modelOp, glm::vec3(0.5f)); // AQUI LA NUEVA ESCALA
+		staticShader.setMat4("model", modelOp);
+		raFixedBase.Draw(staticShader);
+		
+		modelOp = glm::translate(jerarquia, glm::vec3(0.0f, 10.652f, 0.0f));
+		jerarquia = modelOp = glm::rotate(modelOp, glm::radians(baseRotation), glm::vec3(0.0f, 1.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		raRotativeBase.Draw(staticShader);
+		
+		jerarquia = modelOp = glm::translate(jerarquia, glm::vec3(0.0f, 10.471f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		raAxe.Draw(staticShader);
+		
+		modelOp = glm::translate(jerarquia, glm::vec3(0.09f, 13.601f, 0.139));
+		jerarquia = modelOp = glm::rotate(modelOp, glm::radians(cil0Rotation), glm::vec3(1.0f, 0.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		raCilinder00.Draw(staticShader);
+		
+		jerarquia = modelOp = glm::translate(jerarquia, glm::vec3(8.35f, 0.16f, 0.3f));
+		staticShader.setMat4("model", modelOp);
+		raLongArm.Draw(staticShader);
+		
+		modelOp = glm::translate(jerarquia, glm::vec3(-8.0f, 51.3f, -27.0f));
+		jerarquia = modelOp = glm::rotate(modelOp, glm::radians(cil1Rotation), glm::vec3(1.0f, 0.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		raCilinder01.Draw(staticShader);
+		
+		jerarquia = modelOp = glm::translate(jerarquia, glm::vec3(-6.0f, 0.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		raMediumArm.Draw(staticShader);
+		
+		modelOp = glm::translate(jerarquia, glm::vec3(6.0f, -30.0f, 38.0f));
+		jerarquia = modelOp = glm::rotate(modelOp, glm::radians(cil2Rotation), glm::vec3(1.0f, 0.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		raCilinder02.Draw(staticShader);
+		
+		jerarquia = modelOp = glm::translate(jerarquia, glm::vec3(4.0f, 0.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		raShortArm.Draw(staticShader);
+		
+		jerarquia = modelOp = glm::translate(jerarquia, glm::vec3(-4.5f, 27.0f, -5.0f));
+		staticShader.setMat4("model", modelOp);
+		raCilinder.Draw(staticShader);
+		
+		jerarquia = modelOp = glm::translate(jerarquia, glm::vec3(4.0f, 11.0f, -13.0f));
+		staticShader.setMat4("model", modelOp);
+		raCilinder03.Draw(staticShader);
+		
+		modelOp = glm::translate(jerarquia, glm::vec3(-5.0f, 0.0f, 0.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(handRotation), glm::vec3(1.0f, 0.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		raLeft.Draw(staticShader);
+		
+		modelOp = glm::translate(jerarquia, glm::vec3(-5.0f, 0.0f, 0.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(-handRotation), glm::vec3(1.0f, 0.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		raRight.Draw(staticShader);
+		
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Escenario
 		// -------------------------------------------------------------------------------------------------------------------------
