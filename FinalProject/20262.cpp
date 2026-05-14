@@ -2,7 +2,7 @@
 /* ----------------   Proyecto Final   --------------------*/
 /*-----------------    2026-2   ---------------------------*/
 /*-------- Alumnos: ---------------------------------------*/
-/*-------- - García Martiínez Carlos Alfredo --------------*/
+/*-------- - García Martínez Carlos Alfredo --------------*/
 /*-------- - Medina Vaca Katia Alessandra    --------------*/
 /*-------- - Morales Zaragoza Eric Francisco --------------*/
 /*-------- - Dueñas Jarvio Pablo Alam        --------------*/
@@ -1055,9 +1055,13 @@ int main() {
 
 		glm::mat4 jerarquia;
 
-		// Si se desea mover o reescalar el brazo robotico
-		// SOLAMENTE se debe colocar la nueva posición y la nueva escala en los siguientes vectores
+		/*
+		Si se desea mover, rotar o reescalar el brazo robotico;
+		SOLAMENTE se debe colocar la nueva posición, la nueva rotación y la nueva escala
+		en los siguientes vectores.
+		*/
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); // AQUI LA NUEVA POSICIÓN
+		modelOp = glm::rotate(modelOp, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // AQUI LA NUEVA ROTACIÓN
 		jerarquia = modelOp = glm::scale(modelOp, glm::vec3(0.5f)); // AQUI LA NUEVA ESCALA
 		staticShader.setMat4("model", modelOp);
 		raFixedBase.Draw(staticShader);
