@@ -98,6 +98,7 @@ rotX = 0.0f;
 //Texture
 unsigned int	
 t_white,
+t_techo,
 t_piso;
 
 //Lighting
@@ -373,6 +374,7 @@ void LoadTextures()
 {
 
 	t_piso = generateTextures("Texturas/pisoTextura.png", 1, true);
+	t_techo = generateTextures("Texturas/techo.png", 1, true);
 	//This must be the last
 	t_white = generateTextures("Texturas/white.jpg", 0, false);
 }
@@ -390,14 +392,14 @@ void myData() {
 		1, 2, 3  // second triangle
 	};
 
-	float verticesPiso[] = {
+	float verticesTecho[] = {
 		// positions          // texture coords
-		 10.5f,  10.5f, 0.0f,   4.0f, 4.0f, // top right
-		 10.5f, -10.5f, 0.0f,   4.0f, 0.0f, // bottom right
-		-10.5f, -10.5f, 0.0f,   0.0f, 0.0f, // bottom left
-		-10.5f,  10.5f, 0.0f,   0.0f, 4.0f  // top left 
+		 1.0f,  1.0f, 0.0f,   2.0f, 2.0f, // top right
+		 1.0f, -1.0f, 0.0f,   2.0f, 0.0f, // bottom right
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // bottom left
+		-1.0f,  1.0f, 0.0f,   0.0f, 2.0f  // top left 
 	};
-	unsigned int indicesPiso[] = {
+	unsigned int indicesTecho[] = {
 		0, 1, 3, // first triangle
 		1, 2, 3  // second triangle
 	};
@@ -468,10 +470,10 @@ void myData() {
 	//Para Piso
 	glBindVertexArray(VAO[2]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesPiso), verticesPiso, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesTecho), verticesTecho, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[2]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesPiso), indicesPiso, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesTecho), indicesTecho, GL_STATIC_DRAW);
 
 	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -742,7 +744,7 @@ int main() {
 		myShader.use();
 
 		//Tener Piso como referencia
-		glBindVertexArray(VAO[2]);
+		//glBindVertexArray(VAO[2]);
 		//Colocar código aquí
 		/*modelOp = glm::scale(glm::mat4(1.0f), glm::vec3(40.0f, 2.0f, 40.0f));
 		modelOp = glm::translate(modelOp, glm::vec3(0.0f, -1.0f, 0.0f));
@@ -754,7 +756,8 @@ int main() {
 
 		
 		glBindVertexArray(VAO[0]);
-		//Colocar código aquí
+		//Piso
+		
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, -51.0f));
 		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(183.0f, 141.0f, 1.0f));
@@ -763,7 +766,17 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, t_piso);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		glBindVertexArray(VAO[0]);
+		glBindVertexArray(VAO[2]);
+		//Techo
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 114.0f, -51.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(183.0f, 141.0f, 1.0f));
+		myShader.setMat4("model", modelOp);
+		myShader.setVec3("aColor", 1.0f, 1.0f, 1.0f);
+		glBindTexture(GL_TEXTURE_2D, t_techo);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		
 		//Colocar código aquí
 		
 		// ------------------------------------------------------------------------------------------------------------------------
@@ -808,6 +821,9 @@ int main() {
 		staticShader.setMat4("model", modelOp);
 		esfera.Draw(staticShader);
 
+		// -------------------------------------------------------------------------------------------------------------------------
+		// Escenario
+		// -------------------------------------------------------------------------------------------------------------------------
 
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 3.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -855,7 +871,6 @@ int main() {
 		columna.Draw(staticShader);
 
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(51.0f, 3.0f, 0.0f));
-		//modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(0.6f, 0.75f, 0.6f));
 		staticShader.setMat4("model", modelOp);
 		stand.Draw(staticShader);
