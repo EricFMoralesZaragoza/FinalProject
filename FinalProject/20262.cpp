@@ -70,7 +70,7 @@ GLFWmonitor* monitors;
 GLuint VBO[3], VAO[3], EBO[3];
 
 //Camera
-Camera camera(glm::vec3(0.0f, 10.0f, 45.0f));
+Camera camera(glm::vec3(0.0f, 90.0f, 45.0f));
 float MovementSpeed = 0.1f;
 GLfloat lastX = SCR_WIDTH / 2.0f,
 		lastY = SCR_HEIGHT / 2.0f;
@@ -96,11 +96,9 @@ movZ = -5.0f,
 rotX = 0.0f;
 
 //Texture
-unsigned int	t_smile,
-t_toalla,
-t_unam,
+unsigned int	
 t_white,
-t_ladrillos;
+t_piso;
 
 //Lighting
 glm::vec3 lightPosition(0.0f, 4.0f, -10.0f);
@@ -374,10 +372,7 @@ unsigned int generateTextures(const char* filename, bool alfa, bool isPrimitive)
 void LoadTextures()
 {
 
-	t_smile = generateTextures("Texturas/awesomeface.png", 1, true);
-	t_toalla = generateTextures("Texturas/toalla.tga", 0, true);
-	t_unam = generateTextures("Texturas/escudo_unam.jpg", 0, true);
-	t_ladrillos = generateTextures("Texturas/bricks.jpg", 0, true);
+	t_piso = generateTextures("Texturas/pisoTextura.png", 1, true);
 	//This must be the last
 	t_white = generateTextures("Texturas/white.jpg", 0, false);
 }
@@ -385,10 +380,10 @@ void LoadTextures()
 void myData() {
 	float vertices[] = {
 		// positions          // texture coords
-		 0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
-		 0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // top left 
+		 1.0f,  1.0f, 0.0f,   10.0f, 6.5f, // top right
+		 1.0f, -1.0f, 0.0f,   10.0f, 0.0f, // bottom right
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // bottom left
+		-1.0f,  1.0f, 0.0f,   0.0f, 6.5f  // top left 
 	};
 	unsigned int indices[] = {
 		0, 1, 3, // first triangle
@@ -579,11 +574,12 @@ int main() {
 	// -----------
 	Model carro("resources/objects/lego_car/PoliceCar.obj");
 	Model esfera("resources/objects/Esfera/Esfera.obj");
-	Model pisoK("resources/objects/pisoK/piso.obj");
+	/*Model pisoK("resources/objects/pisoK/piso.obj");*/
 	Model ventanillas("resources/objects/zona_cajas/ventanillas.obj");
 	Model banquitas("resources/objects/zona_cajas/banquitas4.obj");
 	Model basura("resources/objects/zona_cajas/boteBasura3.obj");
 	Model columna("resources/objects/columna/columna.obj");
+	Model columnaO("resources/objects/column/column.obj");
 
 	ModelAnim Caminar("resources/objects/Caminar/Caminar.dae");
 	Caminar.initShaders(animShader.ID);
@@ -759,13 +755,12 @@ int main() {
 		
 		glBindVertexArray(VAO[0]);
 		//Colocar código aquí
-		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.0f, 0.0f));
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, -51.0f));
 		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelOp = glm::scale(modelOp, glm::vec3(60.0f, 60.0f, 1.0f));
-		
+		modelOp = glm::scale(modelOp, glm::vec3(183.0f, 141.0f, 1.0f));
 		myShader.setMat4("model", modelOp);
 		myShader.setVec3("aColor", 1.0f, 1.0f, 1.0f);
-		glBindTexture(GL_TEXTURE_2D, t_unam);
+		glBindTexture(GL_TEXTURE_2D, t_piso);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(VAO[0]);
@@ -830,11 +825,6 @@ int main() {
 		*/
 
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 3.0f));
-		modelOp = glm::scale(modelOp, glm::vec3(0.6f, 0.6f, 0.6f));
-		staticShader.setMat4("model", modelOp);
-		pisoK.Draw(staticShader);
-
-		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 3.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
 		staticShader.setMat4("model", modelOp);
 		ventanillas.Draw(staticShader);
@@ -848,6 +838,36 @@ int main() {
 		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
 		staticShader.setMat4("model", modelOp);
 		basura.Draw(staticShader);
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(-141.0f, 3.0f, -60.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.5f, 1.0f, 1.0f));
+		staticShader.setMat4("model", modelOp);
+		columnaO.Draw(staticShader);
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(-18.0f, 3.0f, -60.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.5f, 1.0f, 1.0f));
+		staticShader.setMat4("model", modelOp);
+		columnaO.Draw(staticShader);
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(126.0f, 3.0f, -60.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.5f, 1.0f, 1.0f));
+		staticShader.setMat4("model", modelOp);
+		columnaO.Draw(staticShader);
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(126.0f, 3.0f, -171.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader.setMat4("model", modelOp);
+		columna.Draw(staticShader);
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(-18.0f, 3.0f, -171.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
+		staticShader.setMat4("model", modelOp);
+		columna.Draw(staticShader);
 
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(90.0f, 0.0f, 15.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(0.1f));
