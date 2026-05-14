@@ -117,9 +117,9 @@ glm::vec3 ambientColor = diffuseColor * glm::vec3(0.75f);
 
 int estadoEsf = 1;
 float
-posIniEsf_x = 51.0f,
-posIniEsf_y = 37.8f,
-posIniEsf_z = -99.0f,
+posIniEsf_x = 150.0f,
+posIniEsf_y = 18.9f,
+posIniEsf_z = -120.0f,
 movEsf_x = posIniEsf_x,
 movEsf_y = posIniEsf_y,
 movEsf_z = posIniEsf_z,
@@ -127,6 +127,12 @@ incMovEsf = 0.0f,
 orientaEsf_y = 0.0f,
 orientaEsf = 90.0f;
 
+//Pendulo
+
+int estadoPen = 1;
+float orientaPen1 = 0.0f,
+	  orientaPen2 = 0.0f,
+	  incPen = 5.0f;
 
 //Auto
 
@@ -151,13 +157,15 @@ recorrido4 = false;
 
 //Keyframes (Manipulación y dibujo)
 float	posX = 0.0f,
-		posY = 0.0f,
-		posZ = 0.0f;
+		posY = 3.0f,
+		posZ = 0.0f,
+		giroMonito = 0.0;
 float	incX = 0.0f,
 		incY = 0.0f,
-		incZ = 0.0f;
+		incZ = 0.0f,
+		incG = 0.0f;
 
-#define MAX_FRAMES 9	//Cantidad máxima de Frames
+#define MAX_FRAMES 15	//Cantidad máxima de Frames
 int i_max_steps = 60;	//Cuadros intermedios
 int i_curr_steps = 0;
 typedef struct _frame
@@ -174,7 +182,7 @@ typedef struct _frame
 }FRAME;
 
 FRAME KeyFrame[MAX_FRAMES];
-int FrameIndex = 0;			//introducir número en caso de tener Key guardados
+int FrameIndex = 13;			//introducir número en caso de tener Key guardados
 bool play = false;
 int playIndex = 0;
 
@@ -186,6 +194,8 @@ void saveFrame(void)
 	KeyFrame[FrameIndex].posX = posX;
 	KeyFrame[FrameIndex].posY = posY;
 	KeyFrame[FrameIndex].posZ = posZ;
+
+	KeyFrame[FrameIndex].giroMonito = giroMonito;
 
 	//Aqui podemos imprimir el valor de la posición para poseteriormente guardar la animación
 
@@ -200,6 +210,8 @@ void resetElements(void)  //Carga la posición inicial al objeto
 	posY = KeyFrame[0].posY;
 	posZ = KeyFrame[0].posZ;
 
+	giroMonito = KeyFrame[0].giroMonito;
+
 }
 
 void interpolation(void)	//PlayIndex define el cuadro inicial de la interpolación
@@ -207,6 +219,8 @@ void interpolation(void)	//PlayIndex define el cuadro inicial de la interpolació
 	incX = (KeyFrame[playIndex + 1].posX - KeyFrame[playIndex].posX) / i_max_steps;
 	incY = (KeyFrame[playIndex + 1].posY - KeyFrame[playIndex].posY) / i_max_steps;
 	incZ = (KeyFrame[playIndex + 1].posZ - KeyFrame[playIndex].posZ) / i_max_steps;
+
+	incG = (KeyFrame[playIndex + 1].giroMonito - KeyFrame[playIndex].giroMonito) / i_max_steps;
 
 }
 
@@ -221,6 +235,25 @@ void animate(void)
 		orientaEsf = myTime * 150;
 	}
 
+	//Animación Pendulo
+	if (estadoPen == 1) //1
+	{
+		orientaPen1 += incPen;
+		incPen -= 0.3;
+
+		if (orientaPen1 <= 0.0f) {
+			incPen = -5;
+			estadoPen = 2;
+		}
+	}
+	if (estadoPen == 2) //1
+	{
+		orientaPen2 += incPen;
+		incPen += 0.3;
+		if (orientaPen2 >= 0.0f) {
+			estadoPen = 1;
+		}
+	}
 
 	//Animación Auto
 	incMovAuto = 0.3f;
@@ -292,8 +325,9 @@ void animate(void)
 		myTime = 0;
 	}
 
-	if (play)
-	{
+	//if (play)
+	//{
+		
 		if (i_curr_steps >= i_max_steps) //end of animation between frames?
 		{
 			playIndex++;
@@ -302,11 +336,14 @@ void animate(void)
 				std::cout << "Animation ended" << std::endl;
 				//printf("termina anim\n");
 				playIndex = 0;
-				play = false;
+				resetElements();
+				i_curr_steps = 1;
+				interpolation();
+				//play = false;
 			}
 			else //Next frame interpolations
 			{
-				i_curr_steps = 0; //Reset counter
+				i_curr_steps = 1; //Reset counter
 				//Interpolation
 				interpolation();
 			}
@@ -318,9 +355,11 @@ void animate(void)
 			posY += incY;
 			posZ += incZ;
 
+			giroMonito += incG;
+
 			i_curr_steps++;
 		}
-	}
+	//}
 
 	
 }
@@ -582,6 +621,8 @@ int main() {
 	Model columna("resources/objects/columna/columna.obj");
 	Model columnaO("resources/objects/column/column.obj");
 	Model stand("resources/objects/stand/stand.obj");
+	Model pendulos("resources/objects/pendulo/pendulos.obj");
+	Model pendulo("resources/objects/pendulo/pendulo.obj");
 
 	ModelAnim Caminar("resources/objects/Caminar/Caminar.dae");
 	Caminar.initShaders(animShader.ID);
@@ -604,16 +645,71 @@ int main() {
 	//Creación de animación
 
 	KeyFrame[0].posX = 0;
-	KeyFrame[0].posY = 0;
+	KeyFrame[0].posY = 3.0;
 	KeyFrame[0].posZ = 0;
-	KeyFrame[0].rotRodIzq = 0;
 	KeyFrame[0].giroMonito = 0;
 
-	KeyFrame[1].posX = 90.0f;
-	KeyFrame[1].posY = 10.0f;
-	KeyFrame[1].posZ = 90.0f;
-	KeyFrame[1].rotRodIzq = 0;
+	KeyFrame[1].posX = 0.0f;
+	KeyFrame[1].posY = 3.0f;
+	KeyFrame[1].posZ = 30.0f;
 	KeyFrame[1].giroMonito = 0;
+
+	KeyFrame[2].posX = 0.0f;
+	KeyFrame[2].posY = 3.0f;
+	KeyFrame[2].posZ = 30.0f;
+	KeyFrame[2].giroMonito = 90.0f;
+
+	KeyFrame[3].posX = 111.0f;
+	KeyFrame[3].posY = 3.0f;
+	KeyFrame[3].posZ = 30.0f;
+	KeyFrame[3].giroMonito = 90.0;
+
+	KeyFrame[4].posX = 111.0f;
+	KeyFrame[4].posY = 3.0f;
+	KeyFrame[4].posZ = 30.0f;
+	KeyFrame[4].giroMonito = 180.0;
+
+	KeyFrame[5].posX = 111.0f;
+	KeyFrame[5].posY = 3.0f;
+	KeyFrame[5].posZ = -132.0f;
+	KeyFrame[5].giroMonito = 180.0;
+
+	KeyFrame[6].posX = 111.0f;
+	KeyFrame[6].posY = 3.0f;
+	KeyFrame[6].posZ = -132.0f;
+	KeyFrame[6].giroMonito = 270.0;
+
+	KeyFrame[7].posX = -90.0f;
+	KeyFrame[7].posY = 3.0f;
+	KeyFrame[7].posZ = -132.0f;
+	KeyFrame[7].giroMonito = 270.0;
+
+	KeyFrame[8].posX = -90.0f;
+	KeyFrame[8].posY = 3.0f;
+	KeyFrame[8].posZ = -132.0f;
+	KeyFrame[8].giroMonito = 360.0;
+
+	KeyFrame[9].posX = -90.0f;
+	KeyFrame[9].posY = 3.0f;
+	KeyFrame[9].posZ = 0.0f;
+	KeyFrame[9].giroMonito = 360.0;
+
+	KeyFrame[10].posX = -90.0f;
+	KeyFrame[10].posY = 3.0f;
+	KeyFrame[10].posZ = 0.0f;
+	KeyFrame[10].giroMonito = 450.0;
+
+	KeyFrame[11].posX = 0.0f;
+	KeyFrame[11].posY = 3.0f;
+	KeyFrame[11].posZ = 0.0f;
+	KeyFrame[11].giroMonito = 450.0;
+
+	KeyFrame[12].posX = 0.0f;
+	KeyFrame[12].posY = 3.0f;
+	KeyFrame[12].posZ = 0.0f;
+	KeyFrame[12].giroMonito = 360.0f;
+
+	interpolation();
 
 
 	// create transformations and Projection
@@ -805,6 +901,30 @@ int main() {
 		esfera.Draw(staticShader);
 
 		// -------------------------------------------------------------------------------------------------------------------------
+		// Pendulo
+		// -------------------------------------------------------------------------------------------------------------------------
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(51.0f, 40.5f, -99.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.5f, 1.5f, 1.5f));
+		staticShader.setMat4("model", modelOp);
+		pendulos.Draw(staticShader);
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(45.0f, 40.5f, -99.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(orientaPen1), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.5f, 1.5f, 1.5f));
+		staticShader.setMat4("model", modelOp);
+		pendulo.Draw(staticShader);
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(57.0f, 40.5f, -99.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(orientaPen2), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(1.5f, 1.5f, 1.5f));
+		staticShader.setMat4("model", modelOp);
+		pendulo.Draw(staticShader);
+
+		// -------------------------------------------------------------------------------------------------------------------------
 		// Escenario
 		// -------------------------------------------------------------------------------------------------------------------------
 
@@ -880,12 +1000,13 @@ int main() {
 		animShader.setMat4("view", viewOp);
 
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(posX, posY, posZ));
-		modelOp = glm::scale(modelOp, glm::vec3(0.3f));
+		modelOp = glm::rotate(modelOp, glm::radians(giroMonito), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.27f));
 		animShader.setMat4("model", modelOp);
 		Caminar.Draw(animShader); 
 
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(51.0f, 3.0f, -27.0f));
-		modelOp = glm::scale(modelOp, glm::vec3(0.3f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.27f));
 		animShader.setMat4("model", modelOp);
 		Waving.Draw(animShader);
 		
