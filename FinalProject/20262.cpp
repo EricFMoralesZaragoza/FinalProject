@@ -1057,8 +1057,9 @@ int main() {
 
 		// Si se desea mover o reescalar el brazo robotico
 		// SOLAMENTE se debe colocar la nueva posición y la nueva escala en los siguientes vectores
-		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); // AQUI LA NUEVA POSICIÓN
-		jerarquia = modelOp = glm::scale(modelOp, glm::vec3(0.5f)); // AQUI LA NUEVA ESCALA
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(-126.0f, 25.5f, -120.0f)); // AQUI LA NUEVA POSICIÓN
+		jerarquia = modelOp = glm::scale(modelOp, glm::vec3(0.21f)); // AQUI LA NUEVA ESCALA
+		jerarquia = modelOp = glm::rotate(modelOp, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		staticShader.setMat4("model", modelOp);
 		raFixedBase.Draw(staticShader);
 		
@@ -1232,8 +1233,12 @@ void my_input(GLFWwindow* window, int key, int scancode, int action, int mode)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
 		camera.ProcessKeyboard(FORWARD, (float)deltaTime);
+		std::cout << "X: "<< camera.Position.x << std::endl;
+		std::cout << "Y: " << camera.Position.y << std::endl;
+		std::cout << "Z: " << camera.Position.z << std::endl;
+	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		camera.ProcessKeyboard(BACKWARD, (float)deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -1241,55 +1246,34 @@ void my_input(GLFWwindow* window, int key, int scancode, int action, int mode)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, (float)deltaTime);
 
-	//To Configure Model
-	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
-		posZ++;
-	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-		posZ--;
-	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-		posX--;
-	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
-		posX++;
-
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		posY--;
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		posY++;
-
-
-
-	//Car animation
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-		animacion ^= true;
-		
-	//To play KeyFrame animation 
-	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	//Configurar botones de camaras
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) 
 	{
-		if (play == false && (FrameIndex > 1))
-		{
-			std::cout << "Play animation" << std::endl;
-			resetElements();
-			//First Interpolation				
-			interpolation();
-
-			play = true;
-			playIndex = 0;
-			i_curr_steps = 0;
-		}
-		else
-		{
-			play = false;
-			std::cout << "Not enough Key Frames" << std::endl;
-		}
+		camera.Position.x = -180.0f;
+		camera.Position.y = 60.0f;
+		camera.Position.z = 45.0f;
+		camera.Front.x = 1.0f;
+		camera.Front.y = 0.0f;
+		camera.Front.z = 0.0f;
 	}
-
-	//To Save a KeyFrame
-	if (key == GLFW_KEY_L && action == GLFW_PRESS)
+		
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
 	{
-		if (FrameIndex < MAX_FRAMES)
-		{
-			saveFrame();
-		}
+		camera.Position.x = -35.16f;
+		camera.Position.y = 44.78f;
+		camera.Position.z = -120.0f;
+		camera.Front.x = -1.0f;
+		camera.Front.y = 0.0f;
+		camera.Front.z = 0.0f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+	{
+		camera.Position.x = 51.29f;
+		camera.Position.y = 39.16f;
+		camera.Position.z = 73.8f;
+		camera.Front.x = 0.0f;
+		camera.Front.y = 0.0f;
+		camera.Front.z = -1.0f;
 	}
 
 }
