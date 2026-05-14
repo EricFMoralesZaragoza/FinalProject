@@ -586,6 +586,9 @@ int main() {
 	ModelAnim Caminar("resources/objects/Caminar/Caminar.dae");
 	Caminar.initShaders(animShader.ID);
 
+	ModelAnim Waving("resources/objects/Waving/Waving.dae");
+	Waving.initShaders(animShader.ID);
+
 	//Inicialización de KeyFrames
 	/*for (int i = 0; i < MAX_FRAMES; i++)
 	{
@@ -654,26 +657,6 @@ int main() {
 		staticShader.setFloat("pointLight[0].constant", 0.08f);
 		staticShader.setFloat("pointLight[0].linear", 0.009f);
 		staticShader.setFloat("pointLight[0].quadratic", 0.000032f);
-
-		/*
-		staticShader.setVec3("pointLight[1].position", glm::vec3(0.0, 0.0f, 0.0f)); //Luz 2
-		staticShader.setVec3("pointLight[1].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-		staticShader.setVec3("pointLight[1].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
-		staticShader.setVec3("pointLight[1].specular", glm::vec3(0.0f, 0.0f, 0.0f));
-		staticShader.setFloat("pointLight[1].constant", 1.0f);
-		staticShader.setFloat("pointLight[1].linear", 0.009f);
-		staticShader.setFloat("pointLight[1].quadratic", 0.000032f);
-		*/
-		
-		/*
-		staticShader.setVec3("pointLight[2].position", glm::vec3(0.0, 0.0f, 0.0f));
-		staticShader.setVec3("pointLight[2].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-		staticShader.setVec3("pointLight[2].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
-		staticShader.setVec3("pointLight[2].specular", glm::vec3(0.0f, 0.0f, 0.0f));
-		staticShader.setFloat("pointLight[2].constant", 1.0f);
-		staticShader.setFloat("pointLight[2].linear", 0.009f);
-		staticShader.setFloat("pointLight[2].quadratic", 0.000032f);
-		*/
 
 		staticShader.setVec3("spotLight[0].position", glm::vec3(camera.Position.x, camera.Position.y, camera.Position.z));
 		staticShader.setVec3("spotLight[0].direction", glm::vec3(camera.Front.x, camera.Front.y, camera.Front.z));
@@ -887,10 +870,24 @@ int main() {
 		staticShader.setMat4("model", modelOp);
 		stand.Draw(staticShader);
 
-		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(90.0f, 0.0f, 15.0f));
-		modelOp = glm::scale(modelOp, glm::vec3(0.1f));
+
+		// -------------------------------------------------------------------------------------------------------------------------
+		// Personajes
+		// -------------------------------------------------------------------------------------------------------------------------
+
+		animShader.use();
+		animShader.setMat4("projection", projectionOp);
+		animShader.setMat4("view", viewOp);
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(posX, posY, posZ));
+		modelOp = glm::scale(modelOp, glm::vec3(0.3f));
 		animShader.setMat4("model", modelOp);
 		Caminar.Draw(animShader); 
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(51.0f, 3.0f, -27.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.3f));
+		animShader.setMat4("model", modelOp);
+		Waving.Draw(animShader);
 		
 
 		// Limitar el framerate a 60
