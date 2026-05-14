@@ -116,9 +116,9 @@ glm::vec3 ambientColor = diffuseColor * glm::vec3(0.75f);
 
 int estadoEsf = 1;
 float
-posIniEsf_x = 0.0f,
-posIniEsf_y = 12.0f,
-posIniEsf_z = 0.0f,
+posIniEsf_x = 51.0f,
+posIniEsf_y = 37.8f,
+posIniEsf_z = -99.0f,
 movEsf_x = posIniEsf_x,
 movEsf_y = posIniEsf_y,
 movEsf_z = posIniEsf_z,
@@ -131,9 +131,9 @@ orientaEsf = 90.0f;
 
 int estadoAutoLego = 1;
 float
-posIniAuto_x = 0.0f,
-posIniAuto_y = 0.0f,
-posIniAuto_z = 0.0f,
+posIniAuto_x = 51.0f,
+posIniAuto_y = 27.0f,
+posIniAuto_z = 4.5f,
 movAuto_x = posIniAuto_x,
 movAuto_y = posIniAuto_y,
 movAuto_z = posIniAuto_z,
@@ -216,8 +216,8 @@ void animate(void)
 	//Animación Esfera
 	if (estadoEsf == 1) //Avanza
 	{
-		movEsf_y = posIniEsf_y + sin(myTime*15)*3;
-		orientaEsf = myTime * 120;
+		movEsf_y = posIniEsf_y + sin(myTime*15)*6.6;
+		orientaEsf = myTime * 150;
 	}
 
 
@@ -250,7 +250,7 @@ void animate(void)
 		movAuto_y += incMovAuto*0.6;
 		orienta_y = -30.96;
 		orienta = -90.0f;
-		if (movAuto_x <= posIniAuto_x - 3.0f && movAuto_y >= 6.0f) {
+		if (movAuto_x <= (posIniAuto_x - 3.0f) && movAuto_y >= (posIniAuto_y + 6.0f)) {
 			estadoAutoLego = 5;
 		}
 	}
@@ -259,7 +259,7 @@ void animate(void)
 		movAuto_y -= incMovAuto * 2.1;
 		orienta = -90.0f;
 		orienta_y = 0.0f;
-		if (movAuto_x <= posIniAuto_x - 6.0f && movAuto_y <= 0.0f) {
+		if (movAuto_x <= (posIniAuto_x - 6.0f) && movAuto_y <= (posIniAuto_y + 0.0f)) {
 			estadoAutoLego = 6;
 		}
 	}
@@ -574,12 +574,12 @@ int main() {
 	// -----------
 	Model carro("resources/objects/lego_car/PoliceCar.obj");
 	Model esfera("resources/objects/Esfera/Esfera.obj");
-	/*Model pisoK("resources/objects/pisoK/piso.obj");*/
 	Model ventanillas("resources/objects/zona_cajas/ventanillas.obj");
 	Model banquitas("resources/objects/zona_cajas/banquitas4.obj");
 	Model basura("resources/objects/zona_cajas/boteBasura3.obj");
 	Model columna("resources/objects/columna/columna.obj");
 	Model columnaO("resources/objects/column/column.obj");
+	Model stand("resources/objects/stand/stand.obj");
 
 	ModelAnim Caminar("resources/objects/Caminar/Caminar.dae");
 	Caminar.initShaders(animShader.ID);
@@ -788,41 +788,26 @@ int main() {
 		// Carro
 		// -------------------------------------------------------------------------------------------------------------------------
 
-		/*
 		
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(movAuto_x, movAuto_y, movAuto_z - 15.0f));
 		tmp = modelOp = glm::rotate(modelOp, glm::radians(orienta), glm::vec3(0.0f, 1.0f, 0.0f));
 		tmp = modelOp = glm::rotate(modelOp, glm::radians(orienta_y), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
-		staticShader.setVec3("dirLight.specular", glm::vec3(0.0f, 0.0f, 9.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(2.1f, 2.1f, 2.1f));
 		staticShader.setMat4("model", modelOp);
 		carro.Draw(staticShader);
 
-		*/
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Esfera
 		// -------------------------------------------------------------------------------------------------------------------------
 
-		/* modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(movEsf_x, movEsf_y, movEsf_z));
-		tmp = modelOp = glm::rotate(modelOp, glm::radians(orientaEsf), glm::vec3(0.0f, 1.0f, 0.0f));
-		tmp = modelOp = glm::rotate(modelOp, glm::radians(orientaEsf_y), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
-		staticShader.setMat4("model", modelOp);
-		esfera.Draw(staticShader);
-
-		*/
-
-		/*
-
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(movEsf_x, movEsf_y, movEsf_z));
 		tmp = modelOp = glm::rotate(modelOp, glm::radians(orientaEsf), glm::vec3(0.0f, 1.0f, 0.0f));
 		tmp = modelOp = glm::rotate(modelOp, glm::radians(orientaEsf_y), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(2.1f, 2.1f, 2.1f));
 		staticShader.setMat4("model", modelOp);
-		pisoK.Draw(staticShader);
+		esfera.Draw(staticShader);
 
-		*/
 
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 3.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -869,10 +854,28 @@ int main() {
 		staticShader.setMat4("model", modelOp);
 		columna.Draw(staticShader);
 
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(51.0f, 3.0f, 0.0f));
+		//modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.6f, 0.75f, 0.6f));
+		staticShader.setMat4("model", modelOp);
+		stand.Draw(staticShader);
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(51.0f, 3.0f, -102.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(-180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.6f, 0.75f, 0.6f));
+		staticShader.setMat4("model", modelOp);
+		stand.Draw(staticShader);
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(-120.0f, 3.0f, -120.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.6f, 0.75f, 0.6f));
+		staticShader.setMat4("model", modelOp);
+		stand.Draw(staticShader);
+
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(90.0f, 0.0f, 15.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(0.1f));
 		animShader.setMat4("model", modelOp);
-		Caminar.Draw(animShader);
+		Caminar.Draw(animShader); 
 		
 
 		// Limitar el framerate a 60
