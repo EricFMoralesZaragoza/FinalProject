@@ -332,6 +332,179 @@ void getResolution() {
 	SCR_HEIGHT = (mode->height) - 80;
 }
 
+unsigned int generateTextures(const char* filename, bool alfa, bool isPrimitive)
+{
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// load image, create texture and generate mipmaps
+	int width, height, nrChannels;
+
+	if (isPrimitive)
+		stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	else
+		stbi_set_flip_vertically_on_load(false); // tell stb_image.h to flip loaded texture's on the y-axis.
+
+
+	unsigned char* data = stbi_load(filename, &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		if (alfa)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		else
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		return textureID;
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+		return 100;
+	}
+
+	stbi_image_free(data);
+}
+
+void LoadTextures()
+{
+
+	t_smile = generateTextures("Texturas/awesomeface.png", 1, true);
+	t_toalla = generateTextures("Texturas/toalla.tga", 0, true);
+	t_unam = generateTextures("Texturas/escudo_unam.jpg", 0, true);
+	t_ladrillos = generateTextures("Texturas/bricks.jpg", 0, true);
+	//This must be the last
+	t_white = generateTextures("Texturas/white.jpg", 0, false);
+}
+
+void myData() {
+	float vertices[] = {
+		// positions          // texture coords
+		 0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
+		 0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // bottom left
+		-0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // top left 
+	};
+	unsigned int indices[] = {
+		0, 1, 3, // first triangle
+		1, 2, 3  // second triangle
+	};
+
+	float verticesPiso[] = {
+		// positions          // texture coords
+		 10.5f,  10.5f, 0.0f,   4.0f, 4.0f, // top right
+		 10.5f, -10.5f, 0.0f,   4.0f, 0.0f, // bottom right
+		-10.5f, -10.5f, 0.0f,   0.0f, 0.0f, // bottom left
+		-10.5f,  10.5f, 0.0f,   0.0f, 4.0f  // top left 
+	};
+	unsigned int indicesPiso[] = {
+		0, 1, 3, // first triangle
+		1, 2, 3  // second triangle
+	};
+
+	GLfloat verticesCubo[] = {
+		//Position				//texture coords
+		-0.5f, -0.5f, 0.5f,		0.0f, 0.0f,	//V0 - Frontal
+		0.5f, -0.5f, 0.5f,		1.0f, 0.0f,	//V1
+		0.5f, 0.5f, 0.5f,		1.0f, 1.0f,	//V5
+		-0.5f, -0.5f, 0.5f,		0.0f, 0.0f,	//V0
+		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4
+		0.5f, 0.5f, 0.5f,		1.0f, 1.0f,	//V5
+
+		0.5f, -0.5f, -0.5f,		0.0f, 0.0f,	//V2 - Trasera
+		-0.5f, -0.5f, -0.5f,	1.0f, 0.0f,	//V3
+		-0.5f, 0.5f, -0.5f,		1.0f, 1.0f,	//V7
+		0.5f, -0.5f, -0.5f,		0.0f, 0.0f,	//V2
+		0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V6
+		-0.5f, 0.5f, -0.5f,		1.0f, 1.0f,	//V7
+
+		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4 - Izq
+		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V7
+		-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,	//V3
+		-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,	//V3
+		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4
+		-0.5f, -0.5f, 0.5f,		0.0f, 1.0f,	//V0
+
+		0.5f, 0.5f, 0.5f,		1.0f, 0.0f,	//V5 - Der
+		0.5f, -0.5f, 0.5f,		1.0f, 0.0f,	//V1
+		0.5f, -0.5f, -0.5f,		1.0f, 0.0f,	//V2
+		0.5f, 0.5f, 0.5f,		1.0f, 0.0f,	//V5
+		0.5f, 0.5f, -0.5f,		1.0f, 0.0f,	//V6
+		0.5f, -0.5f, -0.5f,		1.0f, 0.0f,	//V2
+
+		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4 - Sup
+		0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V5
+		0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V6
+		-0.5f, 0.5f, 0.5f,		0.0f, 1.0f,	//V4
+		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V7
+		0.5f, 0.5f, -0.5f,		0.0f, 1.0f,	//V6
+
+		-0.5f, -0.5f, 0.5f,		1.0f, 1.0f,	//V0 - Inf
+		-0.5f, -0.5f, -0.5f,	1.0f, 1.0f,	//V3
+		0.5f, -0.5f, -0.5f,		1.0f, 1.0f,	//V2
+		-0.5f, -0.5f, 0.5f,		1.0f, 1.0f,	//V0
+		0.5f, -0.5f, -0.5f,		1.0f, 1.0f,	//V2
+		0.5f, -0.5f, 0.5f,		1.0f, 1.0f,	//V1
+	};
+
+	glGenVertexArrays(3, VAO);
+	glGenBuffers(3, VBO);
+	glGenBuffers(3, EBO);
+
+	glBindVertexArray(VAO[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[0]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	// texture coord attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	//Para Piso
+	glBindVertexArray(VAO[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesPiso), verticesPiso, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesPiso), indicesPiso, GL_STATIC_DRAW);
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	// texture coord attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+
+	//PARA CUBO
+	glBindVertexArray(VAO[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesCubo), verticesCubo, GL_STATIC_DRAW);
+
+	/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);*/
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	// texture coord attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
 int main() {
 	// glfw: initialize and configure
 	glfwInit();
@@ -373,8 +546,8 @@ int main() {
 	// -----------------------------
 	//Mis funciones
 	//Datos a utilizar
-	//LoadTextures();
-	//myData();
+	LoadTextures();
+	myData();
 	glEnable(GL_DEPTH_TEST);
 
 	
@@ -476,8 +649,6 @@ int main() {
 		staticShader.setVec3("dirLight.ambient", glm::vec3(0.6f, 0.6f, 0.6f));		//Luz que viene de todas las direcciones
 		staticShader.setVec3("dirLight.diffuse", glm::vec3(0.0f, 0.0f, 0.0f));		//Luz que proviene de un punto. Con el cambio de los valores podemos cambiar el color
 		staticShader.setVec3("dirLight.specular", glm::vec3(0.0f, 0.0f, 0.0f));		//Luz de los reflejos		
-		
-		
 		staticShader.setVec3("pointLight[0].position", lightPosition);
 		staticShader.setVec3("pointLight[0].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
 		staticShader.setVec3("pointLight[0].diffuse", lightColorChange);
@@ -486,7 +657,7 @@ int main() {
 		staticShader.setFloat("pointLight[0].linear", 0.009f);
 		staticShader.setFloat("pointLight[0].quadratic", 0.000032f);
 
-
+		/*
 		staticShader.setVec3("pointLight[1].position", glm::vec3(0.0, 0.0f, 0.0f)); //Luz 2
 		staticShader.setVec3("pointLight[1].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
 		staticShader.setVec3("pointLight[1].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -494,7 +665,9 @@ int main() {
 		staticShader.setFloat("pointLight[1].constant", 1.0f);
 		staticShader.setFloat("pointLight[1].linear", 0.009f);
 		staticShader.setFloat("pointLight[1].quadratic", 0.000032f);
-
+		*/
+		
+		/*
 		staticShader.setVec3("pointLight[2].position", glm::vec3(0.0, 0.0f, 0.0f));
 		staticShader.setVec3("pointLight[2].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
 		staticShader.setVec3("pointLight[2].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -502,6 +675,7 @@ int main() {
 		staticShader.setFloat("pointLight[2].constant", 1.0f);
 		staticShader.setFloat("pointLight[2].linear", 0.009f);
 		staticShader.setFloat("pointLight[2].quadratic", 0.000032f);
+		*/
 
 		staticShader.setVec3("spotLight[0].position", glm::vec3(camera.Position.x, camera.Position.y, camera.Position.z));
 		staticShader.setVec3("spotLight[0].direction", glm::vec3(camera.Front.x, camera.Front.y, camera.Front.z));
@@ -513,8 +687,10 @@ int main() {
 		staticShader.setFloat("spotLight[0].constant", 1.0f);
 		staticShader.setFloat("spotLight[0].linear", 0.0009f);
 		staticShader.setFloat("spotLight[0].quadratic", 0.0005f);
-
+		
 		staticShader.setFloat("material_shininess", 32.0f);
+		
+		
 
 		//glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 tmp = glm::mat4(1.0f);
@@ -580,6 +756,18 @@ int main() {
 		//glBindTexture(GL_TEXTURE_2D, t_ladrillos);			//Dibujar el piso cómo primitivas
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		
+		glBindVertexArray(VAO[0]);
+		//Colocar código aquí
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 10.0f, 0.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(60.0f, 60.0f, 1.0f));
+		
+		myShader.setMat4("model", modelOp);
+		myShader.setVec3("aColor", 1.0f, 1.0f, 1.0f);
+		glBindTexture(GL_TEXTURE_2D, t_unam);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 		glBindVertexArray(VAO[0]);
 		//Colocar código aquí
 		
@@ -642,7 +830,7 @@ int main() {
 		*/
 
 		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 3.0f));
-		modelOp = glm::scale(modelOp, glm::vec3(1.0f, 1.0f, 1.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.6f, 0.6f, 0.6f));
 		staticShader.setMat4("model", modelOp);
 		pisoK.Draw(staticShader);
 

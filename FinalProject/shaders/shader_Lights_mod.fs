@@ -1,7 +1,7 @@
 #version 330 core
 out vec4 FragColor;
 
-#define NUMBER 3    //Aumentar la cantidad de luces. Si no se completa nos manda un color negro
+#define NUMBER 1    //Aumentar la cantidad de luces. Si no se completa nos manda un color negro
 #define NUMBER_SPOT 1
 
 in vec3 FragPos;
