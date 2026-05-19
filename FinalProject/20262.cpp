@@ -116,6 +116,16 @@ float	baseRotation = 0.0f,
 		handRotation = 0.0f;
 int armState = 0;
 
+// Variables para dron
+float	propellerRotation = 0.0f,
+		dronPosition_x = -20.0f,
+		dronPosition_y = 4.0f,
+		dronPosition_z = -20.0f,
+		dronRotation_xz = 0.0f,
+		dronRotation_y = 0.0f;
+int dronState = 0,
+	helpIterator = 0;
+
 //Esfera
 
 int estadoEsf = 1;
@@ -333,6 +343,157 @@ void animate(void)
 		break;
 	}
 	
+	//Animación Dron
+
+	switch (dronState) {
+		case 0:		// Acelera hélices
+			if (helpIterator < 100){
+				propellerRotation += 0.0f;
+			} else if (helpIterator < 200) {
+				propellerRotation += 13.0f;
+			} else if (helpIterator < 300) {
+				propellerRotation += 25.0f;
+			} else if (helpIterator < 400) {
+				propellerRotation += 50.0f;
+			} else {
+				dronState = 1;
+				helpIterator = -1;
+			}
+			helpIterator++;
+		break;
+		case 1:		// Sube y rota
+			propellerRotation += 50.0f;
+			if (dronPosition_y < 92.0f) {
+				dronPosition_y += 0.25f;
+				dronRotation_y -= 0.103f;
+			} else {
+				dronState = 2;
+			}
+		break;
+		case 2:		// Rota en el plano XZ
+			propellerRotation += 50.0f;
+			if (dronRotation_xz > -10.0f) {
+				dronRotation_xz -= 0.25f;
+			} else {
+				dronState = 3;
+			}
+		break;
+		case 3:		// Avanza hasta destino
+			propellerRotation += 50.0f;
+			if (dronPosition_x < 90.0f) {
+				dronPosition_x += 0.5f;
+				dronPosition_z -= 0.6818f;
+			} else {
+				dronState = 4;
+			}
+		break;
+		case 4:		// Rota en el plano XZ
+			propellerRotation += 50.0f;
+			if (dronRotation_xz < 0.0f) {
+				dronRotation_xz += 0.25f;
+			} else {
+				dronState = 5;
+			}
+		break;
+		case 5:		// baja y rota
+			propellerRotation += 50.0f;
+			if (dronPosition_y > 4.0f) {
+				dronPosition_y -= 0.25f;
+				dronRotation_y += 0.103f;
+			} else {
+				dronState = 6;
+			}
+		break;
+		case 6:		// Desacelera hélices
+			if (helpIterator < 100) {
+				propellerRotation += 50.0f;
+			} else if (helpIterator < 200) {
+				propellerRotation += 25.0f;
+			} else if (helpIterator < 300) {
+				propellerRotation += 13.0f;
+			} else if (helpIterator < 400) {
+				propellerRotation += 0.0f;
+			} else {
+				dronState = 7;
+				helpIterator = -1;
+			}
+			helpIterator++;
+		break;
+		case 7:		// Acelera hélices
+			if (helpIterator < 100) {
+				propellerRotation += 0.0f;
+			} else if (helpIterator < 200) {
+				propellerRotation += 13.0f;
+			} else if (helpIterator < 300) {
+				propellerRotation += 25.0f;
+			} else if (helpIterator < 400) {
+				propellerRotation += 50.0f;
+			} else {
+				dronState = 8;
+				helpIterator = -1;
+			}
+			helpIterator++;
+		break;
+		case 8:		// Sube y rota
+			propellerRotation += 50.0f;
+			if (dronPosition_y < 92.0f) {
+				dronPosition_y += 0.25f;
+				dronRotation_y -= 0.103f;
+			} else {
+				dronState = 9;
+			}
+		break;
+		case 9:		// Rota en el plano XZ
+			propellerRotation += 50.0f;
+			if (dronRotation_xz < 10.0f) {
+				dronRotation_xz += 0.25f;
+			} else {
+				dronState = 10;
+			}
+		break;
+		case 10:	// Avanza hasta origen
+			propellerRotation += 50.0f;
+			if (dronPosition_x > -20.0f) {
+				dronPosition_x -= 0.5f;
+				dronPosition_z += 0.6818f;
+			} else {
+				dronState = 11;
+			}
+		break;
+		case 11:	// Rota en el plano XZ
+			propellerRotation += 50.0f;
+			if (dronRotation_xz > 0.0f) {
+				dronRotation_xz -= 0.25f;
+			} else {
+				dronState = 12;
+			}
+		break;
+		case 12:	// baja y rota
+			propellerRotation += 50.0f;
+			if (dronPosition_y > 4.0f) {
+				dronPosition_y -= 0.25f;
+				dronRotation_y += 0.103f;
+			} else {
+				dronState = 13;
+			}
+		break;
+		case 13:	// Desacelera hélices
+			if (helpIterator < 100) {
+				propellerRotation += 50.0f;
+			} else if (helpIterator < 200) {
+				propellerRotation += 25.0f;
+			} else if (helpIterator < 300) {
+				propellerRotation += 13.0f;
+			} else if (helpIterator < 400) {
+				propellerRotation += 0.0f;
+			} else {
+				dronState = 0;
+				helpIterator = -1;
+			}
+			helpIterator++;
+		break;
+	}
+
 	//Animación Esfera
 	if (estadoEsf == 1) //Avanza
 	{
@@ -675,7 +836,7 @@ int main() {
 	Model pendulos("resources/objects/pendulo/pendulos.obj");
 	Model pendulo("resources/objects/pendulo/pendulo.obj");
 
-	//Modelos del brazo robotico
+	// Modelos del brazo robotico
 	Model raFixedBase("resources/objects/robotArm/ra_fixedBase.obj");
 	Model raLeft("resources/objects/robotArm/ra_left.obj");
 	Model raRight("resources/objects/robotArm/ra_right.obj");
@@ -689,6 +850,13 @@ int main() {
 	Model raCilinder00("resources/objects/robotArm/ra_cilinder00.obj");
 	Model raAxe("resources/objects/robotArm/ra_axe.obj");
 	Model raRotativeBase("resources/objects/robotArm/ra_rotativeBase.obj");
+
+	// Modelos del dron
+	Model droneBody("resources/objects/drone/droneBody.obj");
+	Model droneProp_1("resources/objects/drone/dronePropeller.obj");
+	Model droneProp_2("resources/objects/drone/dronePropeller.obj");
+	Model droneProp_3("resources/objects/drone/dronePropeller.obj");
+	Model droneProp_4("resources/objects/drone/dronePropeller.obj");
 
 	ModelAnim Caminar("resources/objects/Caminar/Caminar.dae");
 	Caminar.initShaders(animShader.ID);
@@ -946,10 +1114,8 @@ int main() {
 
 		glm::mat4 jerarquia;
 
-		// Si se desea mover o reescalar el brazo robotico
-		// SOLAMENTE se debe colocar la nueva posición y la nueva escala en los siguientes vectores
-		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(-126.0f, 25.5f, -120.0f)); // AQUI LA NUEVA POSICIÓN
-		jerarquia = modelOp = glm::scale(modelOp, glm::vec3(0.21f)); // AQUI LA NUEVA ESCALA
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(-126.0f, 25.5f, -120.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.21f));
 		jerarquia = modelOp = glm::rotate(modelOp, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		staticShader.setMat4("model", modelOp);
 		raFixedBase.Draw(staticShader);
@@ -1008,6 +1174,38 @@ int main() {
 		staticShader.setMat4("model", modelOp);
 		raRight.Draw(staticShader);
 		
+
+		// -------------------------------------------------------------------------------------------------------------------------
+		// Dron
+		// -------------------------------------------------------------------------------------------------------------------------
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(dronPosition_x,dronPosition_y,dronPosition_z));
+		modelOp = glm::rotate(modelOp, glm::radians(dronRotation_xz), glm::vec3(1.0f, 0.0f, 1.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(dronRotation_y), glm::vec3(0.0f, 1.0f, 0.0f));
+		jerarquia = modelOp = glm::scale(modelOp, glm::vec3(2.0f));
+		staticShader.setMat4("model", modelOp);
+		droneBody.Draw(staticShader);
+
+		modelOp = glm::translate(jerarquia, glm::vec3(-4.0f, 1.1f, 3.9f));
+		modelOp = glm::rotate(modelOp, glm::radians(-propellerRotation), glm::vec3(0.0f, 1.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		droneProp_1.Draw(staticShader);
+
+		modelOp = glm::translate(jerarquia, glm::vec3(4.0f, 1.1f, 3.9f));
+		modelOp = glm::rotate(modelOp, glm::radians(-propellerRotation + 70.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		droneProp_2.Draw(staticShader);
+
+		modelOp = glm::translate(jerarquia, glm::vec3(-4.0f, 1.1f, -3.6f));
+		modelOp = glm::rotate(modelOp, glm::radians(-propellerRotation + 105.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		droneProp_3.Draw(staticShader);
+
+		modelOp = glm::translate(jerarquia, glm::vec3(4.0f, 1.1f, -3.6f));
+		modelOp = glm::rotate(modelOp, glm::radians(-propellerRotation + 35.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		staticShader.setMat4("model", modelOp);
+		droneProp_4.Draw(staticShader);
+
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Escenario
 		// -------------------------------------------------------------------------------------------------------------------------
