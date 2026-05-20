@@ -1588,9 +1588,6 @@ void my_input(GLFWwindow* window, int key, int scancode, int action, int mode)
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
 		camera.ProcessKeyboard(FORWARD, (float)deltaTime);
-		std::cout << "X: "<< camera.Position.x << std::endl;
-		std::cout << "Y: " << camera.Position.y << std::endl;
-		std::cout << "Z: " << camera.Position.z << std::endl;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		camera.ProcessKeyboard(BACKWARD, (float)deltaTime);
