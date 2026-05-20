@@ -128,11 +128,16 @@ int dronState = 0,
 
 // Variables para pájaros
 float	redBirdPos_x = -68.5f,
-		redBirdPos_y = 10.8f,
 		redBirdPos_z = -160.0f,
 		redBirdRotation = 180.0f,
-		birdJmpAngle = 0.0f;
-int	redBirdState = 0;
+		birdJmpAngle = 0.0f,
+		yellowBirdPos_x = -55.0f,
+		yellowBirdPos_z = -156.0f,
+		yellowBirdRotation = 202.4f,
+		redBirdPos_y,
+		yellowBirdPos_y;
+int	redBirdState = 0,
+	yellowBirdState = 0;
 
 //Esfera
 
@@ -176,16 +181,6 @@ float  orientaDom[6] = { 0,0,0,0,0,0 },
 incDom[6] = { 0,0,0,0,0,0 },
 incA = 45.0f,
 incB = 78.0f;
-
-
-
-
-bool	animacion = false,
-recorrido1 = true,
-recorrido2 = false,
-recorrido3 = false,
-recorrido4 = false;
-
 
 //Keyframes (Manipulación y dibujo)
 float	posX = 0.0f,
@@ -587,47 +582,46 @@ void animate(void)
 	}
 
 	// Animación Pajaros
-	birdJmpAngle += 0.1875f;
-	if (birdJmpAngle < 90.0f) {
+	birdJmpAngle += 0.45f;
+	if (birdJmpAngle < 180.0f) {
 		redBirdPos_y = 10.9 + 0.2 * sin(birdJmpAngle);
-	} else if(birdJmpAngle < 180) {
-		redBirdPos_y = 10.9 + 0.2 * sin(birdJmpAngle);
+		yellowBirdPos_y = 10.9 + 0.2 * cos(birdJmpAngle);
 	} else {
 		birdJmpAngle = 0;
 	}
 
 	switch (redBirdState) {
 		case 0:		// se mueve al punto 1
-			if (redBirdPos_x < -60.0f) {
-				redBirdPos_x += 1.25f;
+			if (redBirdPos_x < -54.5f) {
+				redBirdPos_x += 0.25f;
 			} else {
 				redBirdState = 1;
 			}
 		break;
 		case 1:		// rota
 			if (redBirdRotation < 270.0f) {
-				redBirdRotation += 5.0f;
+				redBirdRotation += 3.0f;
 			} else {
 				redBirdState = 2;
 			}
 		break;
 		case 2:		// se mueve al punto 2
 			if (redBirdPos_z > -163.0f) {
-				redBirdPos_z -= 0.5f;
+				redBirdPos_z -= 0.25f;
 			} else {
 				redBirdState = 3;
 			}
 		break;
 		case 3:		// rota
 			if (redBirdRotation < 360.0f) {
-				redBirdRotation += 5.0f;
+				redBirdRotation += 3.0f;
 			} else {
 				redBirdRotation = 0.0f;
 				redBirdState = 4;
 			}
 		break;
 		case 4:		// se mueve al punto 3
-			if (redBirdPos_x > -64.25f) {
+			if (redBirdPos_x > -61.5f) {
 				redBirdPos_x -= 0.25f;
 			} else {
 				redBirdState = 5;
@@ -635,30 +629,88 @@ void animate(void)
 		break;
 		case 5:		// rota
 			if (redBirdRotation < 90.0f) {
-				redBirdRotation += 5.0f;
+				redBirdRotation += 3.0f;
 			} else {
 				redBirdState = 6;
 			}
 		break;
 		case 6:		// se mueve al punto 4
 			if (redBirdPos_z < -156.0f) {
-				redBirdPos_z += 0.5f;
+				redBirdPos_z += 0.25f;
 			} else {
 				redBirdState = 7;
 			}
 		break;
 		case 7:		// rota
 			if (redBirdRotation > 0.0f) {
-				redBirdRotation -= 5.0f;
+				redBirdRotation -= 3.0f;
 			} else {
 				redBirdState = 8;
 			}
 		break;
 		case 8:		// se mueve al punto 5
-			if (redBirdPos_x > -64.25f) {
+			if (redBirdPos_x > -68.25f) {
 				redBirdPos_x -= 0.25f;
 			} else {
 				redBirdState = 9;
+			}
+		break;
+		case 9:		// rota
+			if (redBirdRotation > -90.0f) {
+				redBirdRotation -= 3.0f;
+			} else {
+				redBirdState = 10;
+			}
+		break;
+		case 10:	// se mueve al punto 0
+			if (redBirdPos_z > -160.0f) {
+				redBirdPos_z -= 0.25f;
+			}
+			else {
+				redBirdState = 11;
+			}
+		break;
+		case 11:	// rota
+			if (redBirdRotation > -180.0f) {
+				redBirdRotation -= 3.0f;
+			} else {
+				redBirdRotation = 180.0f;
+				redBirdState = 0;
+			}
+		break;
+	}
+
+	switch (yellowBirdState) {
+		case 0:		// se mueve a destino
+			if (yellowBirdPos_x < -38.0f) {
+				yellowBirdPos_x += 0.25f;
+				yellowBirdPos_z -= 0.1020f;
+			} else {
+				yellowBirdState = 1;
+			}
+		break;
+		case 1:		// rota
+			if (yellowBirdRotation > 22.4f) {
+				yellowBirdRotation -= 2.0f;
+			} else {
+				yellowBirdState = 2;
+			}
+		break;
+		case 2:		// regresa al origen
+			if (yellowBirdPos_x > -55.0f) {
+				yellowBirdPos_x -= 0.25f;
+				yellowBirdPos_z += 0.1020f;
+			}
+			else {
+				yellowBirdState = 3;
+			}
+		break;
+		case 3:		// rota
+			if (yellowBirdRotation < 202.4f) {
+				yellowBirdRotation += 2.0f;
+			}
+			else {
+				yellowBirdState = 0;
 			}
 		break;
 	}
@@ -1262,7 +1314,7 @@ int main() {
 		// Dominos
 		// -------------------------------------------------------------------------------------------------------------------------
 
-		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(-60.0f, 11.1f, -157.0f));
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(33.0f, 11.1f, -160.0f));
 		tmp = modelOp = glm::rotate(modelOp, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		modelOp = glm::rotate(modelOp, glm::radians(orientaDom[0]), glm::vec3(1.0f, 0.0f, 0.0f));
 		modelOp = glm::scale(modelOp, glm::vec3(0.1f, 0.1f, 0.1f));
@@ -1415,10 +1467,10 @@ int main() {
 		staticShader.setMat4("model", modelOp);
 		redBird.Draw(staticShader);
 
-		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(-50.0f, 11.0f, -160.0f));
-		modelOp = glm::rotate(modelOp, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(yellowBirdPos_x, yellowBirdPos_y, yellowBirdPos_z));
+		modelOp = glm::rotate(modelOp, glm::radians(yellowBirdRotation), glm::vec3(0.0f, 1.0f, 0.0f));
 		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		modelOp = glm::scale(modelOp, glm::vec3(0.3f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.2f));
 		staticShader.setMat4("model", modelOp);
 		yellowBird.Draw(staticShader);
 
