@@ -161,6 +161,17 @@ incMovAuto = 0.0f,
 orienta_y = 0.0f,
 orienta = 90.0f;
 
+//Dominos
+
+int estadoDom = 0;
+float  orientaDom[6] = { 0,0,0,0,0,0 },
+incDom[6] = { 0,0,0,0,0,0 },
+incA = 45.0f,
+incB = 78.0f;
+
+
+
+
 bool	animacion = false,
 recorrido1 = true,
 recorrido2 = false,
@@ -240,6 +251,79 @@ void interpolation(void)	//PlayIndex define el cuadro inicial de la interpolaciÃ
 void animate(void) 
 {
 	myTime += 0.005f;
+
+	// Dominos
+	if (estadoDom == 0) 
+	{
+		orientaDom[0] += incDom[0];
+		incDom[0] += 0.03;
+
+		if (orientaDom[0] >= incA) {
+			incDom[0] = 0;
+			estadoDom = 1;
+		}
+	}
+	if (estadoDom == 1) 
+	{
+		orientaDom[0] += incDom[0];
+		incDom[0] += 0.03;
+
+		orientaDom[1] += incDom[1];
+		incDom[1] += 0.03;
+
+		if (orientaDom[0] >= incB) {
+			incDom[0] = 0;
+		}
+
+		if (orientaDom[1] >= incA) {
+			incDom[1] = 0;
+			estadoDom = 3;
+		}
+	}
+	if (estadoDom == 2)
+	{
+		orientaDom[0] += incDom[0];
+		incDom[0] += 0.03;
+
+		orientaDom[1] += incDom[1];
+		incDom[1] += 0.03;
+
+		orientaDom[2] += incDom[2];
+		incDom[2] += 0.03;
+
+		if (orientaDom[2] >= incA) {
+			incDom[2] = 0;
+			estadoDom = 3;
+		}
+	}
+	if (estadoDom == 3)
+	{
+		orientaDom[1] += incDom[1];
+		incDom[1] += 0.03;
+
+		orientaDom[2] += incDom[2];
+		incDom[2] += 0.03;
+
+		if (orientaDom[1] >= incB) {
+			incDom[1] = 0;
+			estadoDom = 4;
+		}
+
+	}
+	if (estadoDom == 4) {
+		
+		orientaDom[2] += incDom[2];
+		incDom[2] += 0.03;
+
+		if (orientaDom[2] >= 90.0f) {
+			estadoDom = 0;
+			for (int i = 0; i < 6; i++) {
+				orientaDom[i] = 0.0f;
+				incDom[i] = 0.0f;
+			}
+		}
+	}
+
 
 	//AnimaciÃ³n Brazo Robotico
 
@@ -835,6 +919,7 @@ int main() {
 	Model stand("resources/objects/stand/stand.obj");
 	Model pendulos("resources/objects/pendulo/pendulos.obj");
 	Model pendulo("resources/objects/pendulo/pendulo.obj");
+	Model domino("resources/objects/domino/domino.obj");
 
 	// Modelos del brazo robotico
 	Model raFixedBase("resources/objects/robotArm/ra_fixedBase.obj");
@@ -1083,6 +1168,30 @@ int main() {
 		modelOp = glm::scale(modelOp, glm::vec3(2.1f, 2.1f, 2.1f));
 		staticShader.setMat4("model", modelOp);
 		esfera.Draw(staticShader);
+
+		// -------------------------------------------------------------------------------------------------------------------------
+		// Dominos
+		// -------------------------------------------------------------------------------------------------------------------------
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(-60.0f, 11.1f, -157.0f));
+		tmp = modelOp = glm::rotate(modelOp, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(orientaDom[0]), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.1f, 0.1f, 0.1f));
+		staticShader.setMat4("model", modelOp);
+		domino.Draw(staticShader);
+
+		tmp = modelOp = glm::translate(tmp, glm::vec3(0.0f, 0.0f, 3.9f));
+		modelOp = glm::rotate(modelOp, glm::radians(orientaDom[1]), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.1f, 0.1f, 0.1f));
+		staticShader.setMat4("model", modelOp);
+		domino.Draw(staticShader);
+
+		tmp = modelOp = glm::translate(tmp, glm::vec3(0.0f, 0.0f, 3.9f));
+		modelOp = glm::rotate(modelOp, glm::radians(orientaDom[2]), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.1f, 0.1f, 0.1f));
+		staticShader.setMat4("model", modelOp);
+		domino.Draw(staticShader);
+
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Pendulo
