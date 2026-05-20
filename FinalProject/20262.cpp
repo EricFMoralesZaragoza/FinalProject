@@ -126,6 +126,14 @@ float	propellerRotation = 0.0f,
 int dronState = 0,
 	helpIterator = 0;
 
+// Variables para pájaros
+float	redBirdPos_x = -68.5f,
+		redBirdPos_y = 10.8f,
+		redBirdPos_z = -160.0f,
+		redBirdRotation = 180.0f,
+		birdJmpAngle = 0.0f;
+int	redBirdState = 0;
+
 //Esfera
 
 int estadoEsf = 1;
@@ -348,7 +356,7 @@ void animate(void)
 	switch (dronState) {
 		case 0:		// Acelera hélices
 			if (helpIterator < 100){
-				propellerRotation += 0.0f;
+				propellerRotation += 3.0f;
 			} else if (helpIterator < 200) {
 				propellerRotation += 13.0f;
 			} else if (helpIterator < 300) {
@@ -412,7 +420,7 @@ void animate(void)
 			} else if (helpIterator < 300) {
 				propellerRotation += 13.0f;
 			} else if (helpIterator < 400) {
-				propellerRotation += 0.0f;
+				propellerRotation += 3.0f;
 			} else {
 				dronState = 7;
 				helpIterator = -1;
@@ -421,7 +429,7 @@ void animate(void)
 		break;
 		case 7:		// Acelera hélices
 			if (helpIterator < 100) {
-				propellerRotation += 0.0f;
+				propellerRotation += 3.0f;
 			} else if (helpIterator < 200) {
 				propellerRotation += 13.0f;
 			} else if (helpIterator < 300) {
@@ -485,12 +493,89 @@ void animate(void)
 			} else if (helpIterator < 300) {
 				propellerRotation += 13.0f;
 			} else if (helpIterator < 400) {
-				propellerRotation += 0.0f;
+				propellerRotation += 3.0f;
 			} else {
 				dronState = 0;
 				helpIterator = -1;
 			}
 			helpIterator++;
+		break;
+	}
+
+	// Animación Pajaros
+	birdJmpAngle += 0.1875f;
+	if (birdJmpAngle < 90.0f) {
+		redBirdPos_y = 10.9 + 0.2 * sin(birdJmpAngle);
+	} else if(birdJmpAngle < 180) {
+		redBirdPos_y = 10.9 + 0.2 * sin(birdJmpAngle);
+	} else {
+		birdJmpAngle = 0;
+	}
+
+	switch (redBirdState) {
+		case 0:		// se mueve al punto 1
+			if (redBirdPos_x < -60.0f) {
+				redBirdPos_x += 1.25f;
+			} else {
+				redBirdState = 1;
+			}
+		break;
+		case 1:		// rota
+			if (redBirdRotation < 270.0f) {
+				redBirdRotation += 5.0f;
+			} else {
+				redBirdState = 2;
+			}
+		break;
+		case 2:		// se mueve al punto 2
+			if (redBirdPos_z > -163.0f) {
+				redBirdPos_z -= 0.5f;
+			} else {
+				redBirdState = 3;
+			}
+		break;
+		case 3:		// rota
+			if (redBirdRotation < 360.0f) {
+				redBirdRotation += 5.0f;
+			} else {
+				redBirdRotation = 0.0f;
+				redBirdState = 4;
+			}
+		break;
+		case 4:		// se mueve al punto 3
+			if (redBirdPos_x > -64.25f) {
+				redBirdPos_x -= 0.25f;
+			} else {
+				redBirdState = 5;
+			}
+		break;
+		case 5:		// rota
+			if (redBirdRotation < 90.0f) {
+				redBirdRotation += 5.0f;
+			} else {
+				redBirdState = 6;
+			}
+		break;
+		case 6:		// se mueve al punto 4
+			if (redBirdPos_z < -156.0f) {
+				redBirdPos_z += 0.5f;
+			} else {
+				redBirdState = 7;
+			}
+		break;
+		case 7:		// rota
+			if (redBirdRotation > 0.0f) {
+				redBirdRotation -= 5.0f;
+			} else {
+				redBirdState = 8;
+			}
+		break;
+		case 8:		// se mueve al punto 5
+			if (redBirdPos_x > -64.25f) {
+				redBirdPos_x -= 0.25f;
+			} else {
+				redBirdState = 9;
+			}
 		break;
 	}
 
@@ -761,7 +846,7 @@ int main() {
 	monitors = glfwGetPrimaryMonitor();
 	getResolution();
 
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Pratica X 2026-2", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Proyecto Final CGeIHC 2026-2", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -857,6 +942,10 @@ int main() {
 	Model droneProp_2("resources/objects/drone/dronePropeller.obj");
 	Model droneProp_3("resources/objects/drone/dronePropeller.obj");
 	Model droneProp_4("resources/objects/drone/dronePropeller.obj");
+
+	// Modelos de pájaros
+	Model redBird("resources/objects/redBird/redBird.obj");
+	Model yellowBird("resources/objects/yellowBird/yellowBird.obj");
 
 	ModelAnim Caminar("resources/objects/Caminar/Caminar.dae");
 	Caminar.initShaders(animShader.ID);
@@ -1205,6 +1294,24 @@ int main() {
 		modelOp = glm::rotate(modelOp, glm::radians(-propellerRotation + 35.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		staticShader.setMat4("model", modelOp);
 		droneProp_4.Draw(staticShader);
+
+		// -------------------------------------------------------------------------------------------------------------------------
+		// Pájaros
+		// -------------------------------------------------------------------------------------------------------------------------
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(redBirdPos_x, redBirdPos_y, redBirdPos_z));
+		modelOp = glm::rotate(modelOp, glm::radians(redBirdRotation), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.6f));
+		staticShader.setMat4("model", modelOp);
+		redBird.Draw(staticShader);
+
+		modelOp = glm::translate(glm::mat4(1.0f), glm::vec3(-50.0f, 11.0f, -160.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelOp = glm::rotate(modelOp, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelOp = glm::scale(modelOp, glm::vec3(0.3f));
+		staticShader.setMat4("model", modelOp);
+		yellowBird.Draw(staticShader);
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Escenario
